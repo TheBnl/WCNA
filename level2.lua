@@ -111,16 +111,23 @@ end
 local function myTouchListener( event )
 
 	if ( event.phase == "began" and event.target.display == false ) then
-
+--[[
 		print("id: "..event.target.id)
 		print("width: "..event.target.width)
 		print("height: "..event.target.height)
+
 		print("left x: "..event.target.x - (event.target.width/2))
 		print("right x: "..event.target.x - (event.target.width/2) + event.target.width)
+
+		print("top y: "..event.target.y - (event.target.height/2))
+		print("bottom y: "..event.target.y - (event.target.height/2) + event.target.height)
+
+
 		print("x + 1: "..event.target.x - (event.target.width/2) + (gridHeight))
 		print("y: "..event.target.y)
-		print("gridHeight * 6: "..gridWidth *6)
-
+		print("gridWidth * 6: "..gridWidth *6)
+		print("gridHeight * 5: "..gridHeight *5)
+]]
 		event.target.display = true
 
 		transition.to( event.target, { time=150, alpha=1, transition=easing.outQuad } )
@@ -128,18 +135,37 @@ local function myTouchListener( event )
 		addCorners( event.target )
 
 		for i=1,#cornerData do
-			--print("corner object x: "..( cO.posX*gridWidth ))
+			cX = cornerData[i].posX
+			cY = cornerData[i].posY
+
+			--print("corner object x: "..( cX*gridWidth ))
+			--print("corner object y: "..( cY*gridHeight ))
+
+
 			blockX = event.target.x - (event.target.width/2) + event.target.width
-			cornerX = cO.posX*gridWidth
-			print(blockX)
-			print(math.round(blockX*10)*0.1)
-			print(math.round(cornerX*10)*0.1)
+			cornerX = cX*gridWidth
+
+			blockY = event.target.y - (event.target.height/2)
+			cornerY = cY*gridHeight
+
+			--print("block height "..event.target.height)
+			--print("block y "..math.round(blockY))
+			--print("corner y "..math.round(cornerY))
 
 			
-			if ( math.round(blockX*10)*0.1 == math.round(cornerX*10)*0.1 ) then 
+			if ( math.round(blockY) == math.round(cornerY) and math.round(blockX) == math.round(cornerX) ) then 
 				fill.alpha = 1
-				print("sussec!")
+				print("susses!")
+				print("x: "..cornerX)
+				print("y: "..cornerY)
 			end
+
+			--[[if ( math.round(blockY) == math.round(cornerY) ) then 
+				fill.alpha = 1
+				print("susses Y")
+				print("block y: "..blockY)
+				print("corner y: "..cornerY)
+			end]]
 		end
 	
 	elseif ( event.phase == "began" and event.target.display == true ) then
