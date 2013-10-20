@@ -160,13 +160,19 @@ local function myTouchListener( event )
 
 			
 			if ( math.round(blockTopY) == math.round(cornerY) and math.round(blockRightX) == math.round(cornerX) or math.round(blockTopY) == math.round(cornerY) and math.round(blockLeftX) == math.round(cornerX) ) then 
-				fill.alpha = 1
+				
+				-- fill corner
+				transition.to( fill, { time=150, alpha=1, transition=easing.outQuad } )
 				print("horizontal susses!")
+			
 			end
 
 			if ( math.round(blockRightX) == math.round(verticalCornerX) and math.round(verticalBlockTopY) == math.round( cornerY ) or math.round(blockRightX) == math.round(verticalCornerX) and math.round(verticalBlockBottomY) == math.round( cornerY ) ) then 
-				fill.alpha = 1
+				
+				-- fill corner
+				transition.to( fill, { time=150, alpha=1, transition=easing.outQuad } )
 				print("vertical susses!")
+			
 			end
 
 			--[[if ( math.round(blockY) == math.round(cornerY) ) then 
@@ -182,6 +188,7 @@ local function myTouchListener( event )
 		event.target.display = false
 
 		transition.to( event.target, { time=150, alpha=0, transition=easing.outQuad } )
+		transition.to( fill, { time=150, alpha=0, transition=easing.outQuad } )
 
 	end
 	return true  --prevents propagation to underlying blockObjects
