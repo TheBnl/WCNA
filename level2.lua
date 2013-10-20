@@ -88,13 +88,20 @@ function cornerObject:new()
 	local cO = {}
 	cO._ID = 0
 	cO.name = "corner"
-	cO.display = false
+	cO.topLeftDisplay = false
+	cO.topRightDisplay = false
+	cO.bottomLeftDisplay = false
+	cO.bottomRightDisplay = false
 	cO.posX = 0
 	cO.posY = 0
 
 	local m = setmetatable(cO,cmt)
 	return cO
 end
+
+local o = blockObject:new()
+
+local cO = cornerObject:new()
 
 function cornerObject:increaseId()
 	self._ID = self.id + 1
@@ -104,12 +111,36 @@ end
 local function myTouchListener( event )
 
 	if ( event.phase == "began" and event.target.display == false ) then
-		print(event.target.id)
+
+		print("id: "..event.target.id)
+		print("width: "..event.target.width)
+		print("height: "..event.target.height)
+		print("left x: "..event.target.x - (event.target.width/2))
+		print("right x: "..event.target.x - (event.target.width/2) + event.target.width)
+		print("x + 1: "..event.target.x - (event.target.width/2) + (gridHeight))
+		print("y: "..event.target.y)
+		print("gridHeight * 6: "..gridWidth *6)
+
 		event.target.display = true
 
 		transition.to( event.target, { time=150, alpha=1, transition=easing.outQuad } )
 
 		addCorners( event.target )
+
+		for i=1,#cornerData do
+			--print("corner object x: "..( cO.posX*gridWidth ))
+			blockX = event.target.x - (event.target.width/2) + event.target.width
+			cornerX = cO.posX*gridWidth
+			print(blockX)
+			print(math.round(blockX*10)*0.1)
+			print(math.round(cornerX*10)*0.1)
+
+			
+			if ( math.round(blockX*10)*0.1 == math.round(cornerX*10)*0.1 ) then 
+				fill.alpha = 1
+				print("sussec!")
+			end
+		end
 	
 	elseif ( event.phase == "began" and event.target.display == true ) then
 
@@ -122,7 +153,7 @@ local function myTouchListener( event )
 end
 
 function addCorners( eventTarget )
-	print(eventTarget.id)
+	--print(eventTarget.id)
 
 		--[[if ( eventTarget.name == "centerTop" or eventTarget.name == "centerBottom" ) then
 
@@ -201,16 +232,11 @@ function cornerObject:drawCorner()
 	bottomLeftCorner:setColor( 0, 0, 0 )
 	bottomRightCorner:setColor( 0, 0, 0 )
 
-	topLeftCorner.width, topRightCorner.width, bottomLeftCorner.width, bottomRightCorner.width = 0, 0, 0, 0
+	topLeftCorner.alpha, topRightCorner.alpha, bottomLeftCorner.alpha, bottomRightCorner.alpha = 0, 0, 0, 0
+	fill.alpha =0
 
-	topLeftCorner:addEventListener( "touch", myTouchListener )
-	topLeftCorner.isHitTestable = true
-	topRightCorner:addEventListener( "touch", myTouchListener )
-	topRightCorner.isHitTestable = true
-	bottomLeftCorner:addEventListener( "touch", myTouchListener )
-	bottomLeftCorner.isHitTestable = true
-	bottomRightCorner:addEventListener( "touch", myTouchListener )
-	bottomRightCorner.isHitTestable = true
+	topLeftCorner.name,topLeftCorner.display, topRightCorner.name,topRightCorner.display, bottomLeftCorner.name,bottomLeftCorner.display, bottomRightCorner.name,bottomRightCorner.display = self.name,self.topLeftDisplay, self.name,self.topRightDisplay, self.name,self.bottomLeftDisplay, self.name,self.bottomRightDisplay
+
 
 end
 
@@ -245,10 +271,6 @@ cmt.__index = function(tab,key)
 		return cornerObject[key]
 	end
 end
-
-local o = blockObject:new()
-
-local cO = cornerObject:new()
 
 -- 'onRelease' event listener for playBtn
 local function onPlayBtnRelease()
