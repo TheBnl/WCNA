@@ -142,10 +142,12 @@ local function myTouchListener( event )
 			--print("corner object y: "..( cY*gridHeight ))
 
 
-			blockX = event.target.x - (event.target.width/2) + event.target.width
+			blockRightX = event.target.x - (event.target.width/2) + event.target.width
+			blockLeftX = event.target.x - (event.target.width/2) - gridWidth
 			cornerX = cX*gridWidth
 
-			blockY = event.target.y - (event.target.height/2)
+			blockTopY = event.target.y - (event.target.height/2)
+			blockBottomY = event.target.y + (event.target.height/2)
 			cornerY = cY*gridHeight
 
 			--print("block height "..event.target.height)
@@ -153,11 +155,9 @@ local function myTouchListener( event )
 			--print("corner y "..math.round(cornerY))
 
 			
-			if ( math.round(blockY) == math.round(cornerY) and math.round(blockX) == math.round(cornerX) ) then 
+			if ( math.round(blockTopY) == math.round(cornerY) and math.round(blockRightX) == math.round(cornerX) or math.round(blockTopY) == math.round(cornerY) and math.round(blockLeftX) == math.round(cornerX) ) then 
 				fill.alpha = 1
 				print("susses!")
-				print("x: "..cornerX)
-				print("y: "..cornerY)
 			end
 
 			--[[if ( math.round(blockY) == math.round(cornerY) ) then 
