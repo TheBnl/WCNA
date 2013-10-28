@@ -21,7 +21,7 @@ require("mathlib")
 --------------------------------------------
 
 -- create a group for the background grid lines
-local grid, blocksGroup, cornerGroup, fill = display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup()
+local grid, blocksGroup, cornerGroup = display.newGroup(), display.newGroup(), display.newGroup()
 
 -- polygon fill options
 local widthheight, isclosed, isperpixel = 1, false, false
@@ -88,10 +88,7 @@ function cornerObject:new()
 	local cO = {}
 	cO._ID = 0
 	cO.name = "corner"
-	cO.topLeftDisplay = false
-	cO.topRightDisplay = false
-	cO.bottomLeftDisplay = false
-	cO.bottomRightDisplay = false
+	cO.display = false
 	cO.posX = 0
 	cO.posY = 0
 
@@ -162,7 +159,7 @@ local function myTouchListener( event )
 			if ( math.round(blockTopY) == math.round(cornerY) and math.round(blockRightX) == math.round(cornerX) or math.round(blockTopY) == math.round(cornerY) and math.round(blockLeftX) == math.round(cornerX) ) then 
 				
 				-- fill corner
-				transition.to( fill, { time=150, alpha=1, transition=easing.outQuad } )
+				--transition.to( fill, { time=150, alpha=1, transition=easing.outQuad } )
 				print("horizontal susses!")
 			
 			end
@@ -170,7 +167,7 @@ local function myTouchListener( event )
 			if ( math.round(blockRightX) == math.round(verticalCornerX) and math.round(verticalBlockTopY) == math.round( cornerY ) or math.round(blockRightX) == math.round(verticalCornerX) and math.round(verticalBlockBottomY) == math.round( cornerY ) ) then 
 				
 				-- fill corner
-				transition.to( fill, { time=150, alpha=1, transition=easing.outQuad } )
+				--transition.to( fill, { time=150, alpha=1, transition=easing.outQuad } )
 				print("vertical susses!")
 			
 			end
@@ -188,7 +185,7 @@ local function myTouchListener( event )
 		event.target.display = false
 
 		transition.to( event.target, { time=150, alpha=0, transition=easing.outQuad } )
-		transition.to( fill, { time=150, alpha=0, transition=easing.outQuad } )
+		--transition.to( fill, { time=150, alpha=0, transition=easing.outQuad } )
 
 	end
 	return true  --prevents propagation to underlying blockObjects
@@ -227,9 +224,14 @@ function blockObject:drawBlock()
 end
 
 function cornerObject:drawCorner()
+	corner = display.newGroup()
+
+	--corner:setReferencePoint( display.TopLeftReferencePoint )
+	--corner.x, corner.y = corner:localToContent( gridWidth * self.posX, gridHeight * self.posY )
+
 	self:increaseId()
 
-	x, y = gridWidth * self.posX, gridHeight * self.posY
+	local x, y = 0,0--gridWidth * self.posX, gridHeight * self.posY
 	addX, addY = gridWidth, gridHeight
 	
 	local tlcPoints = { x,y, x+addX,y, x,y+addY, x,y }
@@ -238,47 +240,38 @@ function cornerObject:drawCorner()
 	local brcPoints	= { x+addX,y+addY, x,y+addY, x+addX,y, x+addX,y+addY }
 
 	-- tlc
-	local topLeftCorner = display.newLine( tlcPoints[1],tlcPoints[2], tlcPoints[3],tlcPoints[4] )
-	topLeftCorner:append( tlcPoints[5],tlcPoints[6], tlcPoints[1],tlcPoints[2] )
-	cornerGroup:insert( topLeftCorner )
-
-	local p = polygonFill( table.listToNamed(tlcPoints,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
-	fill:insert(p)
+	local topLeft = polygonFill( table.listToNamed(tlcPoints,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+	corner:insert( topLeft )
 
 	-- trc
-	local topRightCorner = display.newLine( trcPoints[1],trcPoints[2], trcPoints[3],trcPoints[4] )
-	topRightCorner:append( trcPoints[5],trcPoints[6], trcPoints[1],trcPoints[2] )
-	cornerGroup:insert( topRightCorner )
-
-	local p = polygonFill( table.listToNamed(trcPoints,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
-	fill:insert(p)
+	local topRight = polygonFill( table.listToNamed(trcPoints,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+	corner:insert( topRight )
 
 	-- blc
-	local bottomLeftCorner = display.newLine( blcPoints[1],blcPoints[2], blcPoints[3],blcPoints[4] )
-	bottomLeftCorner:append( blcPoints[5],blcPoints[6], blcPoints[1],blcPoints[2] )
-	cornerGroup:insert( bottomLeftCorner )
-
-	local p = polygonFill( table.listToNamed(blcPoints,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
-	fill:insert(p)
+	local bottomLeft = polygonFill( table.listToNamed(blcPoints,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+	corner:insert( bottomLeft )
 
 	-- brc
-	local bottomRightCorner = display.newLine( brcPoints[1],brcPoints[2], brcPoints[3],brcPoints[4] )
-	bottomRightCorner:append( brcPoints[5],brcPoints[6], brcPoints[1],brcPoints[2] )
-	cornerGroup:insert( bottomRightCorner )
+	local bottomRight = polygonFill( table.listToNamed(brcPoints,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+	corner:insert( bottomRight )
 
-	local p = polygonFill( table.listToNamed(brcPoints,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
-	fill:insert(p)
 
-	topLeftCorner:setColor( 0, 0, 0 )
-	topRightCorner:setColor( 0, 0, 0 )
-	bottomLeftCorner:setColor( 0, 0, 0 )
-	bottomRightCorner:setColor( 0, 0, 0 )
+	
+	--corner:setReferencePoint( display.TopLeftReferencePoint )
+	--corner.cornerX, corner.cornerY = corner:localToContent( (gridWidth * self.posX - gridWidth * 5), gridHeight * self.posY )
 
-	topLeftCorner.alpha, topRightCorner.alpha, bottomLeftCorner.alpha, bottomRightCorner.alpha = 0, 0, 0, 0
-	fill.alpha =0
+	corner.x, corner.y = gridWidth * self.posX, gridHeight * self.posY
 
-	topLeftCorner.name,topLeftCorner.display, topRightCorner.name,topRightCorner.display, bottomLeftCorner.name,bottomLeftCorner.display, bottomRightCorner.name,bottomRightCorner.display = self.name,self.topLeftDisplay, self.name,self.topRightDisplay, self.name,self.bottomLeftDisplay, self.name,self.bottomRightDisplay
+	topLeft.alpha, topRight.alpha, bottomLeft.alpha, bottomRight.alpha = 1, 0, 0, 0
 
+	corner.name, corner.display, corner.alpha = self.name, self.display, 0
+
+	corner.topLeft = topLeftCorner
+	corner.topRight = topRightCorner
+	corner.bottomLeft = bottomLeftCorner
+	corner.bottomRight = bottomRightCorner
+
+	cornerGroup:insert( corner )
 
 end
 
@@ -373,6 +366,16 @@ function scene:createScene( event )
 		cO:drawCorner()
 	end
 
+	print("blocksGroup children: "..blocksGroup.numChildren)
+	print("cornerGroup children: "..cornerGroup.numChildren)
+	print("corner 4 children: "..cornerGroup[4].numChildren)
+
+
+	cornerGroup[2].alpha = 1
+	cornerGroup[4].alpha = 1
+
+	cornerGroup[4].alpha = 1
+	--cornerGroup[4].bottomLeftCorner.alpha = 1
 end
 
 

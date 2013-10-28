@@ -42,8 +42,8 @@ function scene:createScene( event )
                 -- points tabel nodig
                 local points = {10,10,200,10,10,200,10,10}
 
-                local line = display.newLine( points[1],points[2], points[3],points[4] )
-                line:append( points[5],points[6], points[1],points[2] )
+                --local line = display.newLine( points[1],points[2], points[3],points[4] )
+                --line:append( points[5],points[6], points[1],points[2] )
 
                 local p = polygonFill( table.listToNamed(points,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
                 fill:insert(p)
