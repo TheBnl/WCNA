@@ -27,8 +27,8 @@ local grid, blocksGroup, cornerGroup = display.newGroup(), display.newGroup(), d
 local widthheight, isclosed, isperpixel = 1, false, false
 
 -- grid square width and height variables
-local gridWidth = (320/9)
-local gridHeight = (568/15)
+local gridWidth = math.floor(320/9)
+local gridHeight = math.floor(568/15)
 
 display.setDefault( "background", 255, 255, 255 )
 
@@ -108,67 +108,79 @@ end
 local function myTouchListener( event )
 
 	if ( event.phase == "began" and event.target.display == false ) then
---[[
-		print("id: "..event.target.id)
-		print("width: "..event.target.width)
-		print("height: "..event.target.height)
 
-		print("left x: "..event.target.x - (event.target.width/2))
-		print("right x: "..event.target.x - (event.target.width/2) + event.target.width)
-
-		print("top y: "..event.target.y - (event.target.height/2))
-		print("bottom y: "..event.target.y - (event.target.height/2) + event.target.height)
-
-
-		print("x + 1: "..event.target.x - (event.target.width/2) + (gridHeight))
-		print("y: "..event.target.y)
-		print("gridWidth * 6: "..gridWidth *6)
-		print("gridHeight * 5: "..gridHeight *5)
-]]
 		event.target.display = true
-
-		transition.to( event.target, { time=150, alpha=1, transition=easing.outQuad } )
 
 		addCorners( event.target )
 
-		for i=1,#cornerData do
-			cX = cornerData[i].posX
-			cY = cornerData[i].posY
+		transition.to( event.target, { time=150, alpha=1, transition=easing.outQuad } )
+	
+	elseif ( event.phase == "began" and event.target.display == true ) then
 
-			--print("corner object x: "..( cX*gridWidth ))
-			--print("corner object y: "..( cY*gridHeight ))
+		event.target.display = false
 
+		addCorners( event.target )
 
-			blockRightX = event.target.x - (event.target.width/2) + event.target.width
-			blockLeftX = event.target.x - (event.target.width/2) - gridWidth
-			cornerX = cX*gridWidth
+		transition.to( event.target, { time=150, alpha=0, transition=easing.outQuad } )
 
-			blockTopY = event.target.y - (event.target.height/2)
-			blockBottomY = event.target.y + (event.target.height/2)
-			cornerY = cY*gridHeight
+	end
+	return true  --prevents propagation to underlying blockObjects
+end
 
-			verticalCornerX = cornerX + gridWidth
-			verticalBlockTopY = blockTopY - gridHeight
-			verticalBlockBottomY = blockTopY + event.target.height
+function addCorners( eventTarget )
 
-			--print("block height "..event.target.height)
-			--print("block y "..math.round(blockY))
-			--print("corner y "..math.round(cornerY))
+		for i=1,cornerGroup.numChildren do
 
+			local cx = math.floor( cornerGroup[i].x )
+			local cy = math.floor( cornerGroup[i].y )
+
+			local brx = math.floor( eventTarget.x - (eventTarget.width/2) + eventTarget.width )
+			local blx = math.floor( eventTarget.x - (eventTarget.width/2) - gridWidth )
+
+			local bty = math.floor( eventTarget.y - (eventTarget.height/2) )
+			local bby = math.floor( eventTarget.y + (eventTarget.height/2) )
+
+			local vcx = math.floor( cx + gridWidth )
+			local vbty = math.floor( bty - gridHeight )
+			local vbby = bty + math.ceil(eventTarget.height )
 			
-			if ( math.round(blockTopY) == math.round(cornerY) and math.round(blockRightX) == math.round(cornerX) or math.round(blockTopY) == math.round(cornerY) and math.round(blockLeftX) == math.round(cornerX) ) then 
+
+			if ( bty == cy and brx == cx or bty == cy and blx == cx ) then 
 				
-				-- fill corner
-				--transition.to( fill, { time=150, alpha=1, transition=easing.outQuad } )
 				print("horizontal susses!")
+				print("alpha: "..cornerGroup[i].alpha)
+
+				if cornerGroup[i].alpha == 0 then 
+
+					transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
+
+				elseif cornerGroup[i].alpha == 1 then 
+
+					transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
+
+				end
 			
 			end
-
-			if ( math.round(blockRightX) == math.round(verticalCornerX) and math.round(verticalBlockTopY) == math.round( cornerY ) or math.round(blockRightX) == math.round(verticalCornerX) and math.round(verticalBlockBottomY) == math.round( cornerY ) ) then 
+			print(" ")
+			print( "brx: "..brx.." == vcx: "..vcx )
+				print( "and vbty: "..vbty.." == cy: "..cy )
+				print( " - - or - - " )
+				print( "brx: "..brx.." == vcx: "..vcx )
+				print( "and vbby: "..vbby.." == cy: "..cy )
 				
-				-- fill corner
-				--transition.to( fill, { time=150, alpha=1, transition=easing.outQuad } )
+				print(" - - einde vergelijking - - ")
+
+			if ( brx == vcx and vbty == cy or brx == vcx and vbby == cy ) then 
+
 				print("vertical susses!")
+				--print(" ")
+				--print("alpha: "..cornerGroup[i].alpha)
+
+				if cornerGroup[i].alpha == 0 then 
+					transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
+				elseif cornerGroup[i].alpha == 1 then 
+					transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
+				end
 			
 			end
 
@@ -179,26 +191,6 @@ local function myTouchListener( event )
 				print("corner y: "..cornerY)
 			end]]
 		end
-	
-	elseif ( event.phase == "began" and event.target.display == true ) then
-
-		event.target.display = false
-
-		transition.to( event.target, { time=150, alpha=0, transition=easing.outQuad } )
-		--transition.to( fill, { time=150, alpha=0, transition=easing.outQuad } )
-
-	end
-	return true  --prevents propagation to underlying blockObjects
-end
-
-function addCorners( eventTarget )
-	--print(eventTarget.id)
-
-		--[[if ( eventTarget.name == "centerTop" or eventTarget.name == "centerBottom" ) then
-
-			transition.to(eventTarget, { time=0, x=eventTarget.posX + ( eventTarget.width/2 ) , width=eventTarget.width + ( gridWidth * 2 ) } )
-
-		end]]
 end
 
 function blockObject:drawBlock() 
@@ -242,19 +234,22 @@ function cornerObject:drawCorner()
 	-- tlc
 	local topLeft = polygonFill( table.listToNamed(tlcPoints,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
 	corner:insert( topLeft )
+	corner.topLeft = topLeft
 
 	-- trc
 	local topRight = polygonFill( table.listToNamed(trcPoints,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
 	corner:insert( topRight )
+	corner.topRight = topRight
 
 	-- blc
 	local bottomLeft = polygonFill( table.listToNamed(blcPoints,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
 	corner:insert( bottomLeft )
+	corner.bottomLeft = bottomLeft
 
 	-- brc
 	local bottomRight = polygonFill( table.listToNamed(brcPoints,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
 	corner:insert( bottomRight )
-
+	corner.bottomRight = bottomRight
 
 	
 	--corner:setReferencePoint( display.TopLeftReferencePoint )
@@ -262,14 +257,9 @@ function cornerObject:drawCorner()
 
 	corner.x, corner.y = gridWidth * self.posX, gridHeight * self.posY
 
-	topLeft.alpha, topRight.alpha, bottomLeft.alpha, bottomRight.alpha = 1, 0, 0, 0
+	topLeft.alpha, topRight.alpha, bottomLeft.alpha, bottomRight.alpha = 1, 1, 1, 1
 
 	corner.name, corner.display, corner.alpha = self.name, self.display, 0
-
-	corner.topLeft = topLeftCorner
-	corner.topRight = topRightCorner
-	corner.bottomLeft = bottomLeftCorner
-	corner.bottomRight = bottomRightCorner
 
 	cornerGroup:insert( corner )
 
@@ -366,16 +356,6 @@ function scene:createScene( event )
 		cO:drawCorner()
 	end
 
-	print("blocksGroup children: "..blocksGroup.numChildren)
-	print("cornerGroup children: "..cornerGroup.numChildren)
-	print("corner 4 children: "..cornerGroup[4].numChildren)
-
-
-	cornerGroup[2].alpha = 1
-	cornerGroup[4].alpha = 1
-
-	cornerGroup[4].alpha = 1
-	--cornerGroup[4].bottomLeftCorner.alpha = 1
 end
 
 
