@@ -111,6 +111,8 @@ local function myTouchListener( event )
 
 		event.target.display = true
 
+		print(event.target.display)
+
 		addCorners( event.target )
 
 		transition.to( event.target, { time=150, alpha=1, transition=easing.outQuad } )
@@ -118,6 +120,8 @@ local function myTouchListener( event )
 	elseif ( event.phase == "began" and event.target.display == true ) then
 
 		event.target.display = false
+
+		print(event.target.display)
 
 		addCorners( event.target )
 
@@ -129,68 +133,79 @@ end
 
 function addCorners( eventTarget )
 
-		for i=1,cornerGroup.numChildren do
+	for i=1,cornerGroup.numChildren do
 
-			local cx = math.floor( cornerGroup[i].x )
-			local cy = math.floor( cornerGroup[i].y )
+		local cx = math.floor( cornerGroup[i].x )
+		local cy = math.floor( cornerGroup[i].y )
 
-			local brx = math.floor( eventTarget.x - (eventTarget.width/2) + eventTarget.width )
-			local blx = math.floor( eventTarget.x - (eventTarget.width/2) - gridWidth )
+		local brx = math.floor( eventTarget.x - (eventTarget.width/2) + eventTarget.width )
+		local blx = math.floor( eventTarget.x - (eventTarget.width/2) - gridWidth )
 
-			local bty = math.floor( eventTarget.y - (eventTarget.height/2) )
-			local bby = math.floor( eventTarget.y + (eventTarget.height/2) )
+		local bty = math.floor( eventTarget.y - (eventTarget.height/2) )
+		local bby = math.floor( eventTarget.y + (eventTarget.height/2) )
 
-			local vcx = math.floor( cx + gridWidth )
-			local vbty = math.floor( bty - gridHeight )
-			local vbby = bty + math.ceil(eventTarget.height )
+		local vcx = math.floor( cx + gridWidth )
+		local vbty = math.floor( bty - gridHeight )
+		local vbby = bty + math.ceil(eventTarget.height )
+		
+
+		if ( bty == cy and brx == cx or bty == cy and blx == cx ) then 
 			
+			print("horizontal susses!")
 
-			if ( bty == cy and brx == cx or bty == cy and blx == cx ) then 
-				
-				print("horizontal susses!")
-				print("alpha: "..cornerGroup[i].alpha)
+			if cornerGroup[i].alpha == 0 and eventTarget.display == true then
 
-				if cornerGroup[i].alpha == 0 then 
+				cornerGroup[i].display = true
 
-					transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
-
-				elseif cornerGroup[i].alpha == 1 then 
-
-					transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
-
+				for i=1,cornerGroup.numChildren do
+					if ( bty == cy and brx == cx or bty == cy and blx == cx ) then 
+						print("intersect");
+					end
+					if ( brx == vcx and vbty == cy or brx == vcx and vbby == cy ) then 
+						print("intersect");
+					end
 				end
-			
-			end
-			print(" ")
-			print( "brx: "..brx.." == vcx: "..vcx )
-				print( "and vbty: "..vbty.." == cy: "..cy )
-				print( " - - or - - " )
-				print( "brx: "..brx.." == vcx: "..vcx )
-				print( "and vbby: "..vbby.." == cy: "..cy )
-				
-				print(" - - einde vergelijking - - ")
 
-			if ( brx == vcx and vbty == cy or brx == vcx and vbby == cy ) then 
+				transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
 
-				print("vertical susses!")
-				--print(" ")
-				--print("alpha: "..cornerGroup[i].alpha)
+			elseif cornerGroup[i].alpha == 1 and eventTarget.display == false then 
 
-				if cornerGroup[i].alpha == 0 then 
-					transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
-				elseif cornerGroup[i].alpha == 1 then 
-					transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
+				cornerGroup[i].display = false
+
+				for i=1,cornerGroup.numChildren do
+					if ( bty == cy and brx == cx or bty == cy and blx == cx ) then 
+						print("intersect");
+					end
+					if ( brx == vcx and vbty == cy or brx == vcx and vbby == cy ) then 
+						print("intersect");
+					end
 				end
-			
-			end
 
-			--[[if ( math.round(blockY) == math.round(cornerY) ) then 
-				fill.alpha = 1
-				print("susses Y")
-				print("block y: "..blockY)
-				print("corner y: "..cornerY)
-			end]]
+				transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
+
+			end
+		
 		end
+
+		if ( brx == vcx and vbty == cy or brx == vcx and vbby == cy ) then 
+
+			print("vertical susses!")
+
+			if cornerGroup[i].alpha == 0 and eventTarget.display == true then 
+
+				cornerGroup[i].display = true
+
+				transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
+
+			elseif cornerGroup[i].alpha == 1 and eventTarget.display == false then 
+
+				cornerGroup[i].display = false
+
+				transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
+
+			end
+		end
+	end
 end
 
 function blockObject:drawBlock() 
