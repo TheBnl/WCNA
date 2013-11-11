@@ -85,6 +85,7 @@ local cornerData = {
 	{ posX=2, posY=11 },
 	{ posX=6, posY=11 },
 }
+local correctBlocks = {6,7}
 
 local linesX = {3,4,5,6,9,10,11,12}
 local linesY = {2,3,6,7}
@@ -154,7 +155,7 @@ local function myTouchListener( event )
 
 		event.target.display = true
 
-		addCorners( event.target )
+		addCorners( event.target, true )
 
 		transition.to( event.target, { time=150, alpha=1, transition=easing.outQuad } )
 	
@@ -162,8 +163,7 @@ local function myTouchListener( event )
 
 		event.target.display = false
 
-		--removeCorners( event.target )
-		addCorners( event.target )
+		addCorners( event.target, false )
 
 		transition.to( event.target, { time=150, alpha=0, transition=easing.outQuad } )
 
@@ -171,7 +171,7 @@ local function myTouchListener( event )
 	return true  --prevents propagation to underlying blockObjects
 end
 
-function addCorners( eventTarget )
+function addCorners( eventTarget, a )
 
 	local tlnID, trnID, blnID, brnID, tnID, bnID = eventTarget.tln, eventTarget.trn, eventTarget.bln, eventTarget.brn, eventTarget.tn, eventTarget.bn
 	local lcID, rcID, tcID, bcID = eventTarget.lc, eventTarget.rc, eventTarget.tc, eventTarget.bc
@@ -183,23 +183,43 @@ function addCorners( eventTarget )
 
 		if bln == true and brn == true then
 			-- both are true
-			bottomRightCorner(lcID)
-			bottomLeftCorner(rcID)
+			if a == true then
+				bottomRightCorner(lcID, true)
+				bottomLeftCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, true)
+				squareCorner(rcID, true)
+			end
 
 		elseif bln == false and brn == false then
 			-- both are false
-			squareCorner(lcID)
-			squareCorner(rcID)
+			if a == true then
+				squareCorner(lcID, true)
+				squareCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, false)
+				squareCorner(rcID, false)
+			end
 
 		elseif brn == true and bln == false then
 			-- only bottom right is true
-			bottomLeftCorner(rcID)
-			squareCorner(lcID)
+			if a == true then
+				bottomLeftCorner(rcID, true)
+				squareCorner(lcID, true)
+			elseif a == false then
+				squareCorner(rcID, true)
+				squareCorner(lcID, false)
+			end
 
 		elseif brn == false and bln == true then
 			-- only bottom left is true
-			bottomRightCorner(lcID)
-			squareCorner(rcID)
+			if a == true then
+				bottomRightCorner(lcID, true)
+				squareCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, true)
+				squareCorner(rcID, false)
+			end
 
 		else
 			print("exeption on only bottom neigbours")
@@ -210,27 +230,77 @@ function addCorners( eventTarget )
 		local tln, bln, tn = 0, 0, 0
 		local trn, brn, bn = blocksGroup[trnID].display, blocksGroup[brnID].display, blocksGroup[bnID].display
 
-		if trn == true and brn == true and bn == true 
-			or trn == true and brn == false and bn == false then
-			-- if all are true or only top right is true
-			bottomRightCorner(tcID)
-			squareCorner(bcID)
+		if trn == true and brn == true and bn == true then
+			if a == true then
+				bottomRightCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				bottomRightCorner(bcID, true)
+			end
+		elseif trn == false and brn == false and bn == true then
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				squareCorner(bcID, true)
+			end
+		elseif trn == true and brn == false and bn == false then
+			if a == true then
+				bottomRightCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				bottomRightCorner(bcID, false)
+			end
+		elseif trn == true and brn == false and bn == true then
 
-		elseif trn == false and brn == false and bn == false 
-			or trn == false and brn == true and bn == true then
+			if a == true then
+				bottomRightCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+
+		elseif trn == false and brn == false and bn == false then
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				squareCorner(bcID, false)
+			end
+		elseif trn == false and brn == true and bn == true then
 			-- if all are false
-			squareCorner(tcID)
-			squareCorner(bcID)
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				bottomRightCorner(bcID, true)
+			end
 
 		elseif trn == true and brn == true and bn == false then
 			-- if both right is true
-			bottomRightCorner(tcID)
-			topRightCorner(bcID)
+			if a == true then
+				bottomRightCorner(tcID, true)
+				topRightCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
 
 		elseif trn == false and brn == true and bn == false then
 			-- if only bottom right is true
-			bottomRightCorner(bcID)
-			squareCorner(tcID)
+			if a == true then
+				topRightCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				squareCorner(bcID, true)
+				squareCorner(tcID, false)
+			end
 
 		else
 			print("exeption on only right and bottom neigbours")
@@ -241,29 +311,80 @@ function addCorners( eventTarget )
 		local tln, bln, bn = 0, 0, 0
 		local trn, brn, tn = blocksGroup[trnID].display, blocksGroup[brnID].display, blocksGroup[tnID].display
 
-		if trn == false and brn == false and tn == false
-			or trn == false and brn == false and tn == true 
-			or trn == true and brn == false and tn == true then
-			-- if all are true or only top right is true
-			squareCorner(bcID)
-			squareCorner(tcID)
+		if trn == false and brn == false and tn == false then
 
-		elseif trn == false and brn == true and tn == true 
-			or trn == true and brn == true and tn == true 
-			or trn == false and brn == true and tn == false then
-			-- if all are false
-			squareCorner(tcID)
-			topRightCorner(bcID)
+			if a == true then
+				squareCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				squareCorner(bcID, false)
+				squareCorner(tcID, false)
+			end
+
+		elseif trn == false and brn == false and tn == true then
+			
+			if a == true then
+				squareCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				squareCorner(bcID, false)
+				squareCorner(tcID, true)
+			end
+
+		elseif trn == true and brn == false and tn == true then
+			-- if all are false or top right and top neighbour or only top neighbour is true
+			if a == true then
+				squareCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				squareCorner(bcID, false)
+				topRightCorner(tcID, true)
+			end
+
+		elseif trn == false and brn == true and tn == true then
+			if a == true then
+				squareCorner(tcID, true)
+				topRightCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+		elseif trn == true and brn == true and tn == true then
+			if a == true then
+				squareCorner(tcID, true)
+				topRightCorner(bcID, true)
+			elseif a == false then
+				topRightCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+		elseif trn == false and brn == true and tn == false then
+			if a == true then
+				squareCorner(tcID, true)
+				topRightCorner(bcID, true)
+			elseif a == false then
+				topRightCorner(tcID, false)
+				squareCorner(bcID, true)
+			end
 
 		elseif trn == true and brn == true and tn == false then
 			-- if both right is true
-			bottomRightCorner(tcID)
-			topRightCorner(bcID)
+			if a == true then
+				bottomRightCorner(tcID, true)
+				topRightCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
 
 		elseif trn == true and brn == false and tn == false then
 			-- if only top right is true
-			bottomRightCorner(tcID)
-			squareCorner(bcID)
+			if a == true then
+				bottomRightCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, false)
+			end
 
 		else
 			print("exeption on only right and top neigbours")
@@ -274,38 +395,140 @@ function addCorners( eventTarget )
 		local tln, bln = 0, 0
 		local trn, brn, tn, bn = blocksGroup[trnID].display, blocksGroup[brnID].display, blocksGroup[tnID].display, blocksGroup[bnID].display
 
-		if trn == false and brn == false and tn == false and bn == false -- if all are false
-			or trn == true and brn == true and tn == true and bn == true -- if all are true
-			or trn == false and brn == true and tn == false and bn == true -- if bottom and bottom right is true
-			or trn == false and brn == false and tn == false and bn == true -- if only bottom
-			or trn == false and brn == false and tn == true and bn == false -- if only top
-			or trn == true and brn == false and tn == true and bn == false -- if top and top right is true
-			or trn == false and brn == false and tn == true and bn == true -- if top and bottom
-			or trn == true and brn == false and tn == true and bn == true -- if top bottom and top right
-			or trn == false and brn == true and tn == true and bn == true -- if top bottom and bottom right
-			then
+		if trn == false and brn == false and tn == false and bn == false then-- if all are false
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				squareCorner(bcID, false)
+			end
+		elseif trn == true and brn == true and tn == true and bn == true then-- if all are true
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				topRightCorner(tcID, true)
+				bottomRightCorner(bcID, true)
+			end
+		elseif trn == false and brn == true and tn == false and bn == true then-- if bottom and bottom right is true
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				bottomRightCorner(bcID, true)
+			end
+		elseif trn == false and brn == false and tn == false and bn == true then-- if only bottom
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				squareCorner(bcID, true)
+			end
+		elseif trn == false and brn == false and tn == true and bn == false then-- if only top
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, false)
+			end
+		elseif trn == true and brn == false and tn == true and bn == false then-- if top and top right is true
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				topRightCorner(tcID, true)
+				squareCorner(bcID, false)
+			end
+		elseif trn == false and brn == false and tn == true and bn == true then-- if top and bottom
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+		elseif trn == true and brn == false and tn == true and bn == true then-- if top bottom and top right
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				topRightCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+		elseif trn == false and brn == true and tn == true and bn == true then-- if top bottom and bottom right
 
-			squareCorner(tcID)
-			squareCorner(bcID)
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				bottomRightCorner(bcID, true)
+			end
 		
-		elseif trn == true and brn == false and tn == false and bn == false 
-			or trn == true and brn == false and tn == false and bn == true
-			or trn == true and brn == true and tn == false and bn == true then
+		elseif trn == true and brn == false and tn == false and bn == false then
+			if a == true then
+				bottomRightCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, false)
+			end
+		elseif trn == true and brn == false and tn == false and bn == true then
+			if a == true then
+				bottomRightCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+		elseif trn == true and brn == true and tn == false and bn == true then
+			if a == true then
+				bottomRightCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				bottomRightCorner(bcID, true)
+			end
 
-			bottomRightCorner(tcID)
-			squareCorner(bcID)
-
-		elseif trn == false and brn == true and tn == false and bn == false 
-			or trn == false and brn == true and tn == true and bn == false
-			or trn == true and brn == true and tn == true and bn == false then
+		elseif trn == false and brn == true and tn == false and bn == false then
+			if a == true then
+				topRightCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				topRightCorner(tcID, false)
+				squareCorner(bcID, true)
+			end
+		elseif trn == false and brn == true and tn == true and bn == false then
+			if a == true then
+				topRightCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+		elseif trn == true and brn == true and tn == true and bn == false then
 			
-			topRightCorner(bcID)
-			squareCorner(tcID)
+			if a == true then
+				topRightCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				topRightCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
 
 		elseif trn == true and brn == true and tn == false and bn == false then
 			-- if both right is true
-			bottomRightCorner(tcID)
-			topRightCorner(bcID)
+			if a == true then
+				bottomRightCorner(tcID, true)
+				topRightCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
 
 		else
 			print("exeption on right, top and bottom neigbours")
@@ -317,24 +540,44 @@ function addCorners( eventTarget )
 		local tln, trn = blocksGroup[tlnID].display, blocksGroup[trnID].display
 
 		if tln == true and trn == true then
-			-- if both are true
-			topRightCorner(lcID)
-			topLeftCorner(rcID)
+			-- if both are true 													<------------<<		HIERO!
+			if a == true then
+				topRightCorner(lcID, true)
+				topLeftCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, true)
+				squareCorner(rcID, true)
+			end
 
 		elseif trn == false and tln == false then
 			-- if both are false
-			squareCorner(rcID)
-			squareCorner(lcID)
+			if a == true then
+				squareCorner(rcID, true)
+				squareCorner(lcID, true)
+			elseif a == false then
+				squareCorner(rcID, false)
+				squareCorner(lcID, false)
+			end
 
 		elseif tln == true and trn == false then
 			-- if only top left is true
-			topRightCorner(lcID)
-			squareCorner(rcID)
+			if a == true then
+				topRightCorner(lcID, true)
+				squareCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, true)
+				squareCorner(rcID, false)
+			end
 
 		elseif trn == true and tln == false then
 			-- if only top right is true
-			topLeftCorner(rcID)
-			squareCorner(lcID)
+			if a == true then
+				topLeftCorner(rcID, true)
+				squareCorner(lcID, true)
+			elseif a == false then
+				squareCorner(rcID, true)
+				squareCorner(lcID, false)
+			end
 
 		else
 			print("exeption on only top neigbours")
@@ -345,27 +588,75 @@ function addCorners( eventTarget )
 		local trn, brn, tn = 0, 0, 0
 		local tln, bln, bn = blocksGroup[tlnID].display, blocksGroup[blnID].display, blocksGroup[bnID].display
 
-		if tln == true and bln == true and bn == true 
-			or tln == true and bln == false and bn == false then
-			-- if all are true or only top left is true
-			bottomLeftCorner(tcID)
-			squareCorner(bcID)
+		if tln == true and bln == true and bn == true then
+			if a == true then
+				bottomLeftCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				bottomLeftCorner(bcID, true)
+			end
+		elseif tln == false and bln == false and bn == true then
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				squareCorner(bcID, true)
+			end
+		elseif tln == true and bln == false and bn == false then
+			if a == true then
+				bottomLeftCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, false)
+			end
 
-		elseif tln == false and bln == false and bn == false 
-			or tln == false and bln == true and bn == true then
+		elseif tln == false and bln == false and bn == false then
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				squareCorner(bcID, false)
+			end
+		elseif tln == false and bln == true and bn == true then
 			-- if all are false
-			squareCorner(tcID)
-			squareCorner(bcID)
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				bottomLeftCorner(bcID, true)
+			end
 
 		elseif tln == true and bln == true and bn == false then
 			-- if both left is true
-			bottomLeftCorner(tcID)
-			topLeftCorner(bcID)
-
+			if a == true then
+				bottomLeftCorner(tcID, true)
+				topLeftCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+		elseif tln == true and bln == false and bn == true then
+			if a == true then
+				squareCorner(bcID, true)
+				bottomLeftCorner(tcID, true)
+			elseif a == false then
+				squareCorner(bcID, true)
+				squareCorner(tcID, true)
+			end
 		elseif tln == false and bln == true and bn == false then
 			-- if only bottom left is true
-			topLeftCorner(bcID)
-			squareCorner(tcID)
+			if a == true then
+				topLeftCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				squareCorner(bcID, true)
+				squareCorner(tcID, false)
+			end
 
 		else
 			print("exeption on only left and bottom neigbours")
@@ -376,29 +667,76 @@ function addCorners( eventTarget )
 		local trn, brn, bn = 0, 0, 0
 		local tln, bln, tn = blocksGroup[tlnID].display, blocksGroup[blnID].display, blocksGroup[tnID].display
 
-		if tln == false and bln == false and tn == false 
-			or tln == false and bln == false and tn == true 
-			or tln == true and bln == false and tn == true then
-			-- if all are true or only bottom left is true
-			squareCorner(bcID)
-			squareCorner(tcID)
+		if tln == false and bln == false and tn == false then
+			if a == true then
+				squareCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				squareCorner(bcID, false)
+				squareCorner(tcID, false)
+			end
+		elseif tln == false and bln == false and tn == true then
+			if a == true then
+				squareCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				squareCorner(bcID, false)
+				squareCorner(tcID, true)
+			end
+		elseif tln == true and bln == false and tn == true then
+			if a == true then
+				squareCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				topLeftCorner(bcID, false)
+				topLeftCorner(tcID, true)
+			end
 
-		elseif tln == false and bln == true and tn == true 
-			or tln == true and bln == true and tn == true 
-			or tln == false and bln == true and tn == false then
+		elseif tln == false and bln == true and tn == true then
+			if a == true then
+				squareCorner(tcID, true)
+				topLeftCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+		elseif tln == true and bln == true and tn == true then
+			if a == true then
+				squareCorner(tcID, true)
+				topLeftCorner(bcID, true)
+			elseif a == false then
+				topLeftCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+		elseif tln == false and bln == true and tn == false then
 			-- if all are false
-			squareCorner(tcID)
-			topLeftCorner(bcID)
+			if a == true then
+				squareCorner(tcID, true)
+				topLeftCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				squareCorner(bcID, true)
+			end
 
 		elseif tln == true and bln == true and tn == false then
 			-- if both left is true
-			bottomLeftCorner(tcID)
-			topLeftCorner(bcID)
+			if a == true then
+				bottomLeftCorner(tcID, true)
+				topLeftCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
 
 		elseif tln == true and bln == false and tn == false then
 			-- if only top left is true
-			bottomLeftCorner(tcID)
-			squareCorner(bcID)
+			if a == true then
+				bottomLeftCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, false)
+			end
 
 		else
 			print("exeption on only left and top neigbours")
@@ -409,38 +747,140 @@ function addCorners( eventTarget )
 		local trn, brn = 0, 0
 		local tln, bln, tn, bn = blocksGroup[tlnID].display, blocksGroup[blnID].display, blocksGroup[tnID].display, blocksGroup[bnID].display
 
-		if tln == false and bln == false and tn == false and bn == false -- if all are false
-			or tln == true and bln == true and tn == true and bn == true -- if all are true
-			or tln == false and bln == true and tn == false and bn == true -- if bottom and bottom left is true
-			or tln == false and bln == false and tn == false and bn == true -- if only bottom
-			or tln == false and bln == false and tn == true and bn == false -- if only top
-			or tln == true and bln == false and tn == true and bn == false -- if top and top left is true
-			or tln == false and bln == false and tn == true and bn == true -- if top and bottom
-			or tln == true and bln == false and tn == true and bn == true -- if top bottom and top left
-			or tln == false and bln == true and tn == true and bn == true -- if top bottom and bottom left
-			then
+		if tln == false and bln == false and tn == false and bn == false then -- if all are false
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				squareCorner(bcID, false)
+			end
+		elseif tln == true and bln == true and tn == true and bn == true then -- if all are true
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				topLeftCorner(tcID, true)
+				bottomLeftCorner(bcID, true)
+			end
+		elseif tln == false and bln == true and tn == false and bn == true then -- if bottom and bottom left is true
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				bottomLeftCorner(bcID, true)
+			end
+		elseif tln == false and bln == false and tn == false and bn == true then -- if only bottom
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, false)
+				squareCorner(bcID, true)
+			end
+		elseif tln == false and bln == false and tn == true and bn == false then -- if only top
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, false)
+			end
+		elseif tln == true and bln == false and tn == true and bn == false then -- if top and top left is true
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				topLeftCorner(tcID, true)
+				squareCorner(bcID, false)
+			end
+		elseif tln == false and bln == false and tn == true and bn == true then -- if top and bottom
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+		elseif tln == true and bln == false and tn == true and bn == true then -- if top bottom and top left
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				topLeftCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+		elseif tln == false and bln == true and tn == true and bn == true then -- if top bottom and bottom left
 
-			squareCorner(tcID)
-			squareCorner(bcID)
+			if a == true then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				bottomLeftCorner(bcID, true)
+			end
 		
-		elseif tln == true and bln == false and tn == false and bn == false 
-			or tln == true and bln == false and tn == false and bn == true
-			or tln == true and bln == true and tn == false and bn == true then
+		elseif tln == true and bln == false and tn == false and bn == false then
+			if a == true then
+				bottomLeftCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, false)
+			end
+		elseif tln == true and bln == false and tn == false and bn == true then
+			if a == true then
+				bottomLeftCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
+		elseif tln == true and bln == true and tn == false and bn == true then
+			if a == true then
+				bottomLeftCorner(tcID, true)
+				squareCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				bottomLeftCorner(bcID, true)
+			end
 
-			bottomLeftCorner(tcID)
-			squareCorner(bcID)
-
-		elseif tln == false and bln == true and tn == false and bn == false 
-			or tln == false and bln == true and tn == true and bn == false
-			or tln == true and bln == true and tn == true and bn == false then
+		elseif tln == false and bln == true and tn == false and bn == false then
+			if a == true then
+				topLeftCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				squareCorner(bcID, true)
+				squareCorner(tcID, false)
+			end
+		elseif tln == false and bln == true and tn == true and bn == false then
+			if a == true then
+				topLeftCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				squareCorner(bcID, true)
+				squareCorner(tcID, true)
+			end
+		elseif tln == true and bln == true and tn == true and bn == false then
 			
-			topLeftCorner(bcID)
-			squareCorner(tcID)
+			if a == true then
+				topLeftCorner(bcID, true)
+				squareCorner(tcID, true)
+			elseif a == false then
+				topLeftCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
 
 		elseif tln == true and bln == true and tn == false and bn == false then
 			-- if both left is true
-			bottomLeftCorner(tcID)
-			topLeftCorner(bcID)
+			if a == true then
+				bottomLeftCorner(tcID, true)
+				topLeftCorner(bcID, true)
+			elseif a == false then
+				squareCorner(tcID, true)
+				squareCorner(bcID, true)
+			end
 
 		else
 			print("exeption on left, top and bottom neigbours")
@@ -453,58 +893,153 @@ function addCorners( eventTarget )
 
 		if tln == true and trn == true and bln == true and brn == true then
 			-- if all are true
-			squareCorner(lcID)
-			squareCorner(rcID)
+			if a == true then
+				squareCorner(lcID, true)
+				squareCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, true)
+				squareCorner(rcID, true)
+			end
 
 		elseif tln == false and trn == false and bln == false and brn == false then
 			-- if all are false
-			squareCorner(lcID)
-			squareCorner(rcID)
+			if a == true then
+				squareCorner(lcID, true)
+				squareCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, false)
+				squareCorner(rcID, false)
+			end
 
 		elseif tln == true and trn == false and bln == true and brn == false then
 			-- if both left are true
-			squareCorner(lcID)
-			squareCorner(rcID)
+			if a == true then
+				squareCorner(lcID, true)
+				squareCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, true)
+				squareCorner(rcID, false)
+			end
 
 		elseif tln == false and trn == true and bln == false and brn == true then
 			-- if both right are true
-			squareCorner(lcID)
-			squareCorner(rcID)
+			if a == true then
+				squareCorner(lcID, true)
+				squareCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, false)
+				squareCorner(rcID, true)
+			end
 
 		elseif tln == true and trn == true and bln == false and brn == false then
 			-- if both top are true
-			topRightCorner(lcID)
-			topLeftCorner(rcID)
+			if a == true then
+				topRightCorner(lcID, true)
+				topLeftCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, true)
+				squareCorner(rcID, true)
+			end
 
 		elseif tln == false and trn == false and bln == true and brn == true then
 			-- if both bottoms are true
-			bottomRightCorner(lcID)
-			bottomLeftCorner(rcID)
+			if a == true then
+				bottomRightCorner(lcID, true)
+				bottomLeftCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, true)
+				squareCorner(rcID, true)
+			end
 
-		elseif tln == true and trn == false and bln == false and brn == false 
-			or tln == true and trn == true and bln == false and brn == true then
+		elseif tln == true and trn == false and bln == false and brn == false then
+			if a == true then
+				topRightCorner(lcID, true)
+				squareCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, true)
+				squareCorner(rcID, false)
+			end
+		elseif tln == true and trn == true and bln == false and brn == true then
 			-- if only top left is true
-			topRightCorner(lcID)
-			squareCorner(rcID)
+			if a == true then
+				topRightCorner(lcID, true)
+				squareCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, true)
+				squareCorner(rcID, true)
+			end
 
-		elseif tln == false and trn == false and bln == true and brn == false 
-			or tln == false and trn == true and bln == true and brn == true then
+		elseif tln == false and trn == false and bln == true and brn == false then
+			if a == true then
+				bottomRightCorner(lcID, true)
+				squareCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, true)
+				squareCorner(rcID, false)
+			end
+		elseif tln == false and trn == true and bln == true and brn == true then
 			-- if only bottom left is true
-			bottomRightCorner(lcID)
-			squareCorner(rcID)
+			if a == true then
+				bottomRightCorner(lcID, true)
+				squareCorner(rcID, true)
+			elseif a == false then
+				squareCorner(lcID, true)
+				squareCorner(rcID, true)
+			end
 
-		elseif tln == false and trn == true and bln == false and brn == false 
-			or tln == true and trn == true and bln == true and brn == false then
+		elseif tln == false and trn == true and bln == false and brn == false then
+			if a == true then
+				topLeftCorner(rcID, true)
+				squareCorner(lcID, true)
+			elseif a == false then
+				squareCorner(rcID, true)
+				squareCorner(lcID, false)
+			end
+		elseif tln == true and trn == true and bln == true and brn == false then
 			-- if only top right is true
-			topLeftCorner(rcID)
-			squareCorner(lcID)
+			if a == true then
+				topLeftCorner(rcID, true)
+				squareCorner(lcID, true)
+			elseif a == false then
+				squareCorner(rcID, true)
+				squareCorner(lcID, true)
+			end
 
-		elseif tln == false and trn == false and bln == false and brn == true 
-			or tln == true and trn == false and bln == true and brn == true then
+		elseif tln == false and trn == false and bln == false and brn == true then
+			if a == true then
+				bottomLeftCorner(rcID, true)
+				squareCorner(lcID, true)
+			elseif a == false then
+				squareCorner(rcID, true)
+				squareCorner(lcID, false)
+			end
+		elseif tln == true and trn == false and bln == true and brn == true then
 			-- if only bottom right is true
-			bottomLeftCorner(rcID)
-			squareCorner(lcID)
-
+			if a == true then
+				bottomLeftCorner(rcID, true)
+				squareCorner(lcID, true)
+			elseif a == false then
+				squareCorner(rcID, true)
+				squareCorner(lcID, true)
+			end
+		elseif tln == true and trn == false and bln == false and brn == true then
+			-- if only bottom right is true
+			if a == true then
+				bottomLeftCorner(rcID, true)
+				topRightCorner(lcID, true)
+			elseif a == false then
+				squareCorner(rcID, true)
+				squareCorner(lcID, true)
+			end
+		elseif tln == false and trn == true and bln == true and brn == false then
+			-- if only bottom right is true
+			if a == true then
+				topLeftCorner(rcID, true)
+				bottomRightCorner(lcID, true)
+			elseif a == false then
+				squareCorner(rcID, true)
+				squareCorner(lcID, true)
+			end
 		else
 			print("exeption on all is posible corner")
 		end
@@ -513,40 +1048,76 @@ function addCorners( eventTarget )
 	end
 end
 
-function topLeftCorner(i)
-	transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
-	transition.to( cornerGroup[i].topLeft, { time=150, alpha=1, transition=easing.outQuad } )
+function topLeftCorner(i, on)
+
 	cornerGroup[i].bottomRight.alpha = 0
 	cornerGroup[i].bottomLeft.alpha = 0
 	cornerGroup[i].topRight.alpha = 0
+
+	if on == true then 
+		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
+		transition.to( cornerGroup[i].topLeft, { time=150, alpha=1, transition=easing.outQuad } )
+	elseif on == false then
+		transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
+		transition.to( cornerGroup[i].topLeft, { time=150, alpha=0, transition=easing.outQuad } )
+	end
 end
-function topRightCorner(i)
-	transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
-	transition.to( cornerGroup[i].topRight, { time=150, alpha=1, transition=easing.outQuad } )
+function topRightCorner(i, on)
+
 	cornerGroup[i].topLeft.alpha = 0
 	cornerGroup[i].bottomLeft.alpha = 0
 	cornerGroup[i].bottomRight.alpha = 0
+
+	if on == true then 
+		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
+		transition.to( cornerGroup[i].topRight, { time=150, alpha=1, transition=easing.outQuad } )
+	elseif on == false then
+		transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
+		transition.to( cornerGroup[i].topRight, { time=150, alpha=0, transition=easing.outQuad } )
+	end
 end
-function bottomLeftCorner(i)
-	transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
-	transition.to( cornerGroup[i].bottomLeft, { time=150, alpha=1, transition=easing.outQuad } )
+function bottomLeftCorner(i, on)
+
 	cornerGroup[i].bottomRight.alpha = 0
 	cornerGroup[i].topLeft.alpha = 0
 	cornerGroup[i].topRight.alpha = 0
+
+	if on == true then 
+		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
+		transition.to( cornerGroup[i].bottomLeft, { time=150, alpha=1, transition=easing.outQuad } )
+	elseif on == false then
+		transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
+		transition.to( cornerGroup[i].bottomLeft, { time=150, alpha=0, transition=easing.outQuad } )
+	end
 end
-function bottomRightCorner(i)
-	transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
-	transition.to( cornerGroup[i].bottomRight, { time=150, alpha=1, transition=easing.outQuad } )
+function bottomRightCorner(i, on)
+
 	cornerGroup[i].topLeft.alpha = 0
 	cornerGroup[i].bottomLeft.alpha = 0
 	cornerGroup[i].topRight.alpha = 0
+
+	if on == true then 
+		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
+		transition.to( cornerGroup[i].bottomRight, { time=150, alpha=1, transition=easing.outQuad } )
+	elseif on == false then
+		transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
+		transition.to( cornerGroup[i].bottomRight, { time=150, alpha=0, transition=easing.outQuad } )
+	end
 end
-function squareCorner(i)
-	transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
-	cornerGroup[i].bottomRight.alpha=1
-	cornerGroup[i].topLeft.alpha = 1
-	cornerGroup[i].bottomLeft.alpha = 1
-	cornerGroup[i].topRight.alpha = 1
+function squareCorner(i, on)
+	if on == true then 
+		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
+		cornerGroup[i].bottomRight.alpha=1
+		cornerGroup[i].topLeft.alpha = 1
+		cornerGroup[i].bottomLeft.alpha = 1
+		cornerGroup[i].topRight.alpha = 1
+	elseif on == false then
+		transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
+		cornerGroup[i].bottomRight.alpha= 0
+		cornerGroup[i].topLeft.alpha = 0
+		cornerGroup[i].bottomLeft.alpha = 0
+		cornerGroup[i].topRight.alpha = 0
+	end
 end
 
 function blockObject:drawBlock() 
@@ -656,6 +1227,15 @@ cmt.__index = function(tab,key)
 end
 
 -- 'onRelease' event listener for playBtn
+local function onNextBtnRelease()
+	for i=1,#blocksGroup do
+		print(i)
+	end
+	return true	-- indicates successful touch
+end
+
+
+--[[ 'onRelease' event listener for playBtn
 local function onPlayBtnRelease()
 	
 	-- go to level1.lua scene
@@ -663,7 +1243,7 @@ local function onPlayBtnRelease()
 	
 	return true	-- indicates successful touch
 end
-
+]]
 -- draw line X
 local function drawLineX( i )
 	local line = display.newLine( 0,gridHeight*i, 320,gridHeight*i )
@@ -715,6 +1295,8 @@ function scene:createScene( event )
 		o.lc, o.rc, o.tc, o.bc = blocksData[i][2].lc, blocksData[i][2].rc, blocksData[i][2].tc, blocksData[i][2].bc
 		o:drawBlock()
 	end
+
+	onNextBtnRelease()
 
 end
 
