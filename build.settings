@@ -12,6 +12,7 @@ settings = {
 		plist = {
 			UIStatusBarHidden = true,
 			UIPrerenderedIcon = true, 
+			UIApplicationExitsOnSuspend = false,
 			CFBundleIconFiles = {
             "ico/Icon.png",
             "ico/Icon@2x.png",
@@ -19,6 +20,11 @@ settings = {
             "ico/Icon-Small-50.png",
             "ico/Icon-Small.png",
             "ico/Icon-Small@2x.png"
+            },
+            UIAppFonts =
+            {
+                "Gridnik.otf",
+                "new_alphabet.ttf"
             },
 		}
 	},
