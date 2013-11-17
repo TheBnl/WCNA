@@ -1041,65 +1041,82 @@ function addCorners( eventTarget, a )
 end
 
 function topLeftCorner(i, on)
-
+	print("on is:")
+	print(on)
+	print("and cornerGroup is:")
+	print(i)
 	cornerGroup[i].bottomRight.alpha = 0
 	cornerGroup[i].bottomLeft.alpha = 0
 	cornerGroup[i].topRight.alpha = 0
 
 	if on == true then 
-		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
-		transition.to( cornerGroup[i].topLeft, { time=150, alpha=1, transition=easing.outQuad } )
+		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.inQuad } )
+		transition.to( cornerGroup[i].topLeft, { time=150, alpha=1, transition=easing.inQuad } )
 	elseif on == false then
 		transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
 		transition.to( cornerGroup[i].topLeft, { time=150, alpha=0, transition=easing.outQuad } )
 	end
 end
 function topRightCorner(i, on)
-
+	print("on is:")
+	print(on)
+	print("and cornerGroup is:")
+	print(i)
 	cornerGroup[i].topLeft.alpha = 0
 	cornerGroup[i].bottomLeft.alpha = 0
 	cornerGroup[i].bottomRight.alpha = 0
 
 	if on == true then 
-		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
-		transition.to( cornerGroup[i].topRight, { time=150, alpha=1, transition=easing.outQuad } )
+		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.inQuad } )
+		transition.to( cornerGroup[i].topRight, { time=150, alpha=1, transition=easing.inQuad } )
 	elseif on == false then
 		transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
 		transition.to( cornerGroup[i].topRight, { time=150, alpha=0, transition=easing.outQuad } )
 	end
 end
 function bottomLeftCorner(i, on)
-
+	print("on is:")
+	print(on)
+	print("and cornerGroup is:")
+	print(i)
 	cornerGroup[i].bottomRight.alpha = 0
 	cornerGroup[i].topLeft.alpha = 0
 	cornerGroup[i].topRight.alpha = 0
 
 	if on == true then 
-		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
-		transition.to( cornerGroup[i].bottomLeft, { time=150, alpha=1, transition=easing.outQuad } )
+		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.inQuad } )
+		transition.to( cornerGroup[i].bottomLeft, { time=150, alpha=1, transition=easing.inQuad } )
 	elseif on == false then
 		transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
 		transition.to( cornerGroup[i].bottomLeft, { time=150, alpha=0, transition=easing.outQuad } )
 	end
 end
 function bottomRightCorner(i, on)
-
+	print("on is:")
+	print(on)
+	print("and cornerGroup is:")
+	print(i)
 	cornerGroup[i].topLeft.alpha = 0
 	cornerGroup[i].bottomLeft.alpha = 0
 	cornerGroup[i].topRight.alpha = 0
 
 	if on == true then 
-		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
-		transition.to( cornerGroup[i].bottomRight, { time=150, alpha=1, transition=easing.outQuad } )
+		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.inQuad } )
+		transition.to( cornerGroup[i].bottomRight, { time=150, alpha=1, transition=easing.inQuad } )
 	elseif on == false then
 		transition.to( cornerGroup[i], { time=150, alpha=0, transition=easing.outQuad } )
 		transition.to( cornerGroup[i].bottomRight, { time=150, alpha=0, transition=easing.outQuad } )
 	end
 end
 function squareCorner(i, on)
+	print("on is:")
+	print(on)
+	print("and cornerGroup is:")
+	print(i)
+	print(cornerGroup[i].bottomRight)
 	if on == true then 
-		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.outQuad } )
-		cornerGroup[i].bottomRight.alpha=1
+		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.inQuad } )
+		cornerGroup[i].bottomRight.alpha = 1
 		cornerGroup[i].topLeft.alpha = 1
 		cornerGroup[i].bottomLeft.alpha = 1
 		cornerGroup[i].topRight.alpha = 1
@@ -1220,16 +1237,18 @@ cmt.__index = function(tab,key)
 end
 
 local function fadeInOut( target )
+
 	transition.to( blocksGroup[target], { time=300, delay=0, alpha=0.5, transition=easing.outQuad } )
 	transition.to( blocksGroup[target], { time=300, delay=300, alpha=1, transition=easing.inQuad } )
 	transition.to( blocksGroup[target], { time=300, delay=600, alpha=0.5, transition=easing.outQuad } )
 	transition.to( blocksGroup[target], { time=300, delay=900, alpha=1, transition=easing.inQuad } )
+
 end
 
 local function endAnimation()
+	transition.to( grid, { time=300, alpha=0.2, transition=easing.outQuad } )
 	transition.to( blocksGroup, { time=300, alpha=0, transition=easing.outQuad } )
-	transition.to( cornerGroup, { time=300, alpha=0, transition=easing.outQuad } )
-	transition.to( grid, { time=300, alpha=0.5, transition=easing.outQuad } )
+	transition.to( cornerGroup, { time=250, alpha=0, transition=easing.outQuad } )
 	transition.to( nextButton, { time=800, alpha=0, y=-90, transition=easing.outQuad } )
 	transition.to( prevButton, { time=800, alpha=0, y=-90, transition=easing.outQuad } )
 	transition.to( levelIndicator, { time=800, alpha=0, y=588, transition=easing.outQuad } )
@@ -1337,7 +1356,7 @@ local function onNextBtnRelease( event )
 		if correct == 2 and wrong == 8 then
 			print("next level!")
 			alertFact(1)
-			endAnimation()
+			--endAnimation()
 
 		elseif correct > 0 and wrong == 8 then
 			print("something is missing")
@@ -1425,16 +1444,7 @@ local function drawPrevButton()
 
 end
 
------------------------------------------------------------------------------------------
--- BEGINNING OF YOUR IMPLEMENTATION
--- 
--- NOTE: Code outside of listener functions (below) will only be executed once,
---		 unless storyboard.removeScene() is called.
--- 
------------------------------------------------------------------------------------------
-
--- Called when the scene's view does not exist:
-function scene:createScene( event )
+local function drawGrid()
 
 	-- X grid
 	for i, linesX in ipairs(linesX) do
@@ -1445,6 +1455,20 @@ function scene:createScene( event )
 	for i, linesY in ipairs(linesY) do
 		drawLineY( linesY )
 	end
+	grid.alpha = 0
+	transition.to( grid, { time=100, alpha=0.2, transition=easing.inQuad } )
+end
+
+-----------------------------------------------------------------------------------------
+-- BEGINNING OF YOUR IMPLEMENTATION
+-- 
+-- NOTE: Code outside of listener functions (below) will only be executed once,
+--		 unless storyboard.removeScene() is called.
+-- 
+-----------------------------------------------------------------------------------------
+
+-- Called when the scene's view does not exist:
+function scene:createScene( event )
 
 	-- corner objects
 	for i=1,#cornerData do
@@ -1470,7 +1494,9 @@ function scene:enterScene( event )
 
 	drawNextButton()
 	drawPrevButton()
+	drawGrid()
 	drawLevelIndicator( 1, "A" )
+
 	-- INSERT code here (e.g. start timers, load audio, start listeners, etc.)
 	
 end
@@ -1479,7 +1505,7 @@ end
 function scene:exitScene( event )
 	local group = self.view
 	-- INSERT code here (e.g. stop timers, remove listenets, unload sounds, etc.)
-
+	storyboard.removeAll()
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:

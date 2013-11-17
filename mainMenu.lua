@@ -1,7 +1,6 @@
 -----------------------------------------------------------------------------------------
 --
 -- mainMenu.lua
--- solve A
 --
 -----------------------------------------------------------------------------------------
 
@@ -13,6 +12,8 @@ local widget = require "widget"
 
 -- create a group for the background grid lines
 local grid = display.newGroup()
+local play
+local achievements
 
 -- grid square width and height variables
 local gridWidth = math.floor(320/9)
@@ -41,24 +42,77 @@ local function drawLineY( i )
 	grid:insert( line )
 end
 
+local function onAchievementsBtnRelease( event )
+	if event.phase == "began" then
+		print("go to achievements")
+
+		transition.to( play, { time=500, alpha=0, transition=easing.outQuad } )
+		transition.to( achievements, { time=500, alpha=0, transition=easing.outQuad } )
+		--transition.to( grid, { time=500, alpha=1, transition=easing.inQuad } )
+
+		--StartLevel()
+		storyboard.gotoScene( "achievements" )
+	end 
+	return true	-- indicates successful touch
+end
+
+local function onPlayBtnRelease( event )
+	if event.phase == "began" then
+		print("Start playing")
+
+		transition.to( play, { time=500, alpha=0, transition=easing.outQuad } )
+		transition.to( achievements, { time=500, alpha=0, transition=easing.outQuad } )
+		transition.to( grid, { time=500, alpha=1, transition=easing.inQuad } )
+
+		--StartLevel()
+		storyboard.gotoScene( "level1" )
+	end 
+	return true	-- indicates successful touch
+end
+
 -- draw play button
 local function drawPlayBtn()
 
 	local x = gridWidth * 2
-	local y = gridHeight * 5 -29
+	local y = gridHeight * 5 -30
 
-	local CustFont = display.newText( "play", x, y, "New-Alphabet", 121 )
-	CustFont:setFillColor( 0, 0, 0 )
+	play = display.newText( "play", x, y, "New-Alphabet", 121 )
+	play:setFillColor( 0, 0, 0 )
+	play:addEventListener( "touch", onPlayBtnRelease )
+
+	play.alpha = 0
+	transition.to( play, { time=500, alpha=1, transition=easing.inQuad } )
+
+end
+
+local function drawGrid()
+
+	-- X grid
+	for i, linesX in ipairs(linesX) do
+		drawLineX( linesX )
+	end
+
+	-- Y grid
+	for i, linesY in ipairs(linesY) do
+		drawLineY( linesY )
+	end
+	grid.alpha = 0
+	transition.to( grid, { time=100, alpha=0.2, transition=easing.inQuad } )
 end
 
 -- draw achievements button
 local function drawAchievementsBtn()
 
 	local x = gridWidth * 2
-	local y = gridHeight * 9 -29
+	local y = gridHeight * 10 + 14
 
-	local CustFont = display.newText( "achievements", x, y, "New-Alphabet", 39.5 )
-	CustFont:setFillColor( 0, 0, 0 )
+	achievements = display.newText( "achievements", x, y, "New-Alphabet", 39.5 )
+	achievements:setFillColor( 0, 0, 0 )
+	achievements:addEventListener( "touch", onAchievementsBtnRelease )
+
+	achievements.alpha = 0
+	transition.to( achievements, { time=500, alpha=1, transition=easing.inQuad } )
+
 end
 
 -----------------------------------------------------------------------------------------
@@ -71,15 +125,7 @@ end
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-	-- X grid
-	for i, linesX in ipairs(linesX) do
-		drawLineX( linesX )
-	end
-
-	-- Y grid
-	for i, linesY in ipairs(linesY) do
-		drawLineY( linesY )
-	end
+	
 end
 
 
@@ -90,6 +136,7 @@ function scene:enterScene( event )
 
 	drawPlayBtn()
 	drawAchievementsBtn()
+	drawGrid()
 
 	-- INSERT code here (e.g. start timers, load audio, start listeners, etc.)
 	
@@ -98,14 +145,13 @@ end
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
 	local group = self.view
-	-- INSERT code here (e.g. stop timers, remove listenets, unload sounds, etc.)
-
+	storyboard.removeAll()
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
 function scene:destroyScene( event )
 	local group = self.view
-
+	
 end
 
 -----------------------------------------------------------------------------------------
