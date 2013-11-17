@@ -29,6 +29,8 @@ local gridHeight = math.floor(568/15)
 
 -- slidewidth
 local slideWidth = gridWidth * 6
+local scrollListener
+local scrollView
 
 display.setDefault( "background", 255, 255, 255 )
 
@@ -63,36 +65,23 @@ local function onPrevBtnRelease( event )
 	return true	-- indicates successful touch
 end
 
--- touch listener function
---[[
-function slide:touch( event )
-    if event.phase == "began" then
-	
-        self.markX = self.x    -- store x location of object
-	
-    elseif event.phase == "moved" then
-	
-        local x = (event.x - event.xStart) + self.markX
-        
-        self.x = x -- move object based on calculations above
-    end
-    
-    return true
-end
-]]
+
 
 local function scrollListener( event )
     local phase = event.phase
     local direction = event.direction
+    local target = event.target
 
-    print(phase)
-    print(direction)
+    print(event.name)
+
+    --print(direction)
+    --print(target)
 
     if "began" == phase then
         print( "Began" )
     elseif "moved" == phase then
         print( "Moved" )
-    elseif "ended" == phase then
+    elseif phase == "ended" then
         print( "Ended" )
     end
 
@@ -108,19 +97,21 @@ local function scrollListener( event )
     return true
 end
 
+
 -- Create a ScrollView
-local scrollView = widget.newScrollView
+scrollView = widget.newScrollView
 {
     top = gridHeight * 1.5,
     left = 0,
     width = display.contentWidth,
     height = display.contentHeight - ( gridHeight * 3 ),
-    scrollWidth = sliderBox.width,
+    scrollWidth = sliderBox.width + display.contentWidth,
     scrollHeight = slide.height,
     listener = scrollListener,
     verticalScrollDisabled = true,
     hideBackground = true,
     hideScrollBar = true,
+    --friction = 0,
     rightPadding = -( gridWidth * 2.45 ) - ( slideWidth * 0 ) --( #quotes -1 )),
 }
 
@@ -213,14 +204,22 @@ end
 function scene:createScene( event )
 	-- draw the grid
 	drawGrid()	
-
+--[[
+	local space = display.newRect( 0, 0, 0 + (slideWidth * #quotes), 480)
+	space.alpha = 0
+	scrollView:insert(space)
+]]
 	-- place the quotes
 	for i=1, #quotes do
 		drawSlide(i)
 	end
 
-	--sliderBox:addEventListener( "touch", slide )
 	scrollView:insert( sliderBox )
+
+	--scrollView:scrollToPosition({x = -370 , time=500 })
+
+	-- sliderBox:addEventListener( "touch", scrollListener )
+	--scrollView:scrollToPosition({x = 500 * -1 , time=500 })
 
 end
 
