@@ -17,6 +17,29 @@ require("displayex")
 -- include Corona's "math" library
 require("mathlib")
 
+-- levelstorage
+local levelstorage = require("levelstorage")
+
+------------------
+
+-- what level?
+levels =
+{
+2, 2, 2, 2, 2, 2,
+2, 2, 2, 2, 2, 2,
+2, 2, 2, 2, 2, 2,
+2, 2, 2, 2, 2, 2,
+}
+levels = loadLevels()
+
+local unlocks = #levels
+
+for i=1, #levels do 
+	if levels[i] == 1 then
+		unlocks = unlocks - 1
+	end
+end
+
 -- create a group for the background grid lines
 local grid, sliderBox, slide = display.newGroup(), display.newGroup(), display.newGroup()
 
@@ -40,6 +63,22 @@ local linesY = {2,3,6,7}
 
 -- quotes
 local quotes = {
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
 	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
 	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
 	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
@@ -97,7 +136,6 @@ local function scrollListener( event )
     return true
 end
 
-
 -- Create a ScrollView
 scrollView = widget.newScrollView
 {
@@ -112,7 +150,7 @@ scrollView = widget.newScrollView
     hideBackground = true,
     hideScrollBar = true,
     --friction = 0,
-    rightPadding = -( gridWidth * 2.45 ) - ( slideWidth * 0 ) --( #quotes -1 )),
+    rightPadding = -( gridWidth * 2.45 ) - ( slideWidth * ( unlocks ) ),
 }
 
 local function drawSlide( nr )
@@ -132,6 +170,7 @@ local function drawSlide( nr )
 	from:setFillColor( 0, 0, 0 )
 	contentGroup:insert(from)
 
+--[[ -- twitter integration for a later version
 	tweet = display.newRect( tX, tY, gridWidth, gridHeight )
 	tweet:setFillColor(0,172,237)
 	contentGroup:insert(tweet)
@@ -139,9 +178,10 @@ local function drawSlide( nr )
 	tweetIMG = display.newImage( "twit.png" )
 	tweetIMG:translate( tX, tY )
 	contentGroup:insert(tweetIMG)
-	
+]]
 	slide:insert( contentGroup )
 	sliderBox:insert(slide)
+
 end
 
 local function drawPrevButton()
@@ -210,11 +250,17 @@ function scene:createScene( event )
 	scrollView:insert(space)
 ]]
 	-- place the quotes
-	for i=1, #quotes do
+	for i=1, #levels do
 		drawSlide(i)
 	end
 
 	scrollView:insert( sliderBox )
+
+	local options = {
+  		message = "Hello Twitter world!",
+   		listener = tweetCallback
+	}
+	native.showPopup( "twitter", options )
 
 	--scrollView:scrollToPosition({x = -370 , time=500 })
 

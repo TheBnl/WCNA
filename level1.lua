@@ -17,7 +17,23 @@ require("displayex")
 -- include Corona's "math" library
 require("mathlib")
 
+-- levelstorage
+local levelstorage = require("levelstorage")
+
 --------------------------------------------
+
+-- levels
+currentLevel = 1
+currentChar = "A"
+
+levels =
+{
+2, 2, 2, 2, 2, 2,
+2, 2, 2, 2, 2, 2,
+2, 2, 2, 2, 2, 2,
+2, 2, 2, 2, 2, 2,
+}
+levels = loadLevels()
 
 -- create a group for the background grid lines
 local grid, blocksGroup, cornerGroup, correctGroup, wrongGroup,	levelIndicator = display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup()
@@ -1353,16 +1369,23 @@ local function onNextBtnRelease( event )
 		print("correct: "..correct)
 		print("wrong: "..wrong)
 
-		if correct == 2 and wrong == 8 then
+		if correct == #trueBlocks and wrong == #falseBlocks then
 			print("next level!")
-			alertFact(1)
+			print(levels[currentLevel])
+
+			if levels[currentLevel] == 2 then
+				alertFact(currentLevel)
+			end 
+
+			levels[currentLevel] = 1
+			saveLevels()
 			--endAnimation()
 
-		elseif correct > 0 and wrong == 8 then
+		elseif correct > 0 and wrong == #falseBlocks then
 			print("something is missing")
 			alertMissing()
 
-		elseif wrong <= 8 then
+		elseif wrong <= #falseBlocks then
 			print("something is wrong")
 			alertWrong()
 
