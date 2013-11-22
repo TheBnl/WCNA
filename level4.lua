@@ -26,10 +26,13 @@ local levelstorage = require("levelstorage")
 --------------------------------------------
 
 -- levels
-currentLevel = 1
+currentLevel = 4
+currentChar = "l"
 totalLevels = 22
-currentChar = "c"
-nextLevel = "level2"
+nextLevel = "level5"
+
+local trueBlocks = {2,5,7}
+local falseBlocks = {1,3,4,6,8,9,10}
 
 -- change story board options
 local options =
@@ -127,9 +130,6 @@ local cornerData = {
 	{ posX=2, posY=11 },
 	{ posX=6, posY=11 },
 }
-
-local trueBlocks = {4,5,7}
-local falseBlocks = {1,2,3,6,8,9,10}
 
 local correct = 0
 local wrong = 0
@@ -1096,10 +1096,6 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 function topLeftCorner(i, on)
-	print("on is:")
-	print(on)
-	print("and cornerGroup is:")
-	print(i)
 	cornerGroup[i].bottomRight.alpha = 0
 	cornerGroup[i].bottomLeft.alpha = 0
 	cornerGroup[i].topRight.alpha = 0
@@ -1118,10 +1114,6 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 function topRightCorner(i, on)
-	print("on is:")
-	print(on)
-	print("and cornerGroup is:")
-	print(i)
 	cornerGroup[i].topLeft.alpha = 0
 	cornerGroup[i].bottomLeft.alpha = 0
 	cornerGroup[i].bottomRight.alpha = 0
@@ -1140,10 +1132,6 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 function bottomLeftCorner(i, on)
-	print("on is:")
-	print(on)
-	print("and cornerGroup is:")
-	print(i)
 	cornerGroup[i].bottomRight.alpha = 0
 	cornerGroup[i].topLeft.alpha = 0
 	cornerGroup[i].topRight.alpha = 0
@@ -1162,10 +1150,6 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 function bottomRightCorner(i, on)
-	print("on is:")
-	print(on)
-	print("and cornerGroup is:")
-	print(i)
 	cornerGroup[i].topLeft.alpha = 0
 	cornerGroup[i].bottomLeft.alpha = 0
 	cornerGroup[i].topRight.alpha = 0
@@ -1184,11 +1168,6 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 function squareCorner(i, on)
-	print("on is:")
-	print(on)
-	print("and cornerGroup is:")
-	print(i)
-	print(cornerGroup[i].bottomRight)
 	if on == true then 
 		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.inQuad } )
 		cornerGroup[i].bottomRight.alpha = 1
@@ -1228,7 +1207,6 @@ function blockObject:drawBlock(i)
 
 		rect:addEventListener( "touch", myTouchListener )
 		rect.isHitTestable = true
-		rect.isTouchEnabled = true
 
 		blocksGroup:insert( rect )
 end
@@ -1606,10 +1584,10 @@ local function drawNextButton()
 	nextButton = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
 	nextButton:addEventListener( "touch", onNextBtnRelease )
 
-	nextButton.alpha = 0
-	nextButton.y = -90
+	nextButton.alpha = 1
+	--nextButton.y = 0
 
-	transition.to( nextButton, { time=1000, alpha=1, y=0, transition=easing.inQuad } )
+	transition.to( nextButton, { time=10, alpha=1, y=0, transition=easing.inQuad } )
 end
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -1626,10 +1604,10 @@ local function drawPrevButton()
 	prevButton = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
 	prevButton:addEventListener( "touch", onPrevBtnRelease )
 
-	prevButton.alpha = 0
-	prevButton.y = -90
+	prevButton.alpha = 1
+	--prevButton.y = 0
 
-	transition.to( prevButton, { time=1000, alpha=1, y=0, transition=easing.inQuad } )
+	transition.to( prevButton, { time=10, alpha=1, y=0, transition=easing.inQuad } )
 end
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -1685,7 +1663,6 @@ end
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 	local group = self.view
-
 	-- corner objects
 	for i=1,#cornerData do
 		cO.posX, cO.posY = cornerData[i].posX,cornerData[i].posY
@@ -1730,14 +1707,8 @@ end
 function scene:exitScene( event )
 	local group = self.view
 	-- INSERT code here (e.g. stop timers, remove listenets, unload sounds, etc.)
-	resetLevel()
-	print("correct: "..correct)
-	print("wrong: "..wrong)
-	for i=1, #blocksData do
-		print("block["..i.."].display = ")
-		print(blocksGroup[i].display)
-	end
 
+	resetLevel()
 	storyboard.removeAll()
 end
 

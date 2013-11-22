@@ -10,6 +10,26 @@ local scene = storyboard.newScene()
 -- include Corona's "widget" library
 local widget = require "widget"
 
+-- levelstorage
+local levelstorage = require("levelstorage")
+
+-- change story board options
+local options =
+{
+    effect = "crossFade",
+    time = 400
+}
+
+-- what level?
+levels =
+{
+2, 2, 2, 2, 2, 2,
+2, 2, 2, 2, 2, 2,
+2, 2, 2, 2, 2, 2,
+2, 2, 2, 2,
+}
+levels = loadLevels()
+
 -- create a group for the background grid lines
 local grid = display.newGroup()
 local play
@@ -24,6 +44,23 @@ display.setDefault( "background", 255, 255, 255 )
 -- line data
 local linesX = {3,4,5,6,9,10,11,12}
 local linesY = {2,3,6,7}
+
+
+-- alert
+local function alertAchievement()
+	x = math.floor(gridWidth * 3 + 4)
+	y = 55
+	w = math.floor(gridWidth * 3)
+	h = math.floor(gridHeight * 2)
+
+	local alertWrong = display.newText( "Nothing unlocked", x, y, w, h, "Gridnik", 16 )
+	alertWrong:setFillColor( 0, 0, 0 )
+
+	alertWrong.y = -20
+	alertWrong.alpha = 0
+	transition.to( alertWrong, { time=500, alpha=1, y=90, transition=easing.inQuad } )
+	transition.to( alertWrong, { time=500, delay=1400, alpha=0, y=-20, transition=easing.outQuad } )
+end
 
 -- draw lines 
 -- draw line X
@@ -44,14 +81,16 @@ end
 
 local function onAchievementsBtnRelease( event )
 	if event.phase == "began" then
-		print("go to achievements")
 
-		transition.to( play, { time=500, alpha=0, transition=easing.outQuad } )
-		transition.to( achievements, { time=500, alpha=0, transition=easing.outQuad } )
-		--transition.to( grid, { time=500, alpha=1, transition=easing.inQuad } )
-
-		--StartLevel()
-		storyboard.gotoScene( "achievements" )
+		if levels[1] == 1 then
+			print("go to achievements")
+			transition.to( play, { time=500, alpha=0, transition=easing.outQuad } )
+			transition.to( achievements, { time=500, alpha=0, transition=easing.outQuad } )
+			storyboard.gotoScene( "achievements", options )
+		else
+			alertAchievement()
+		end
+		
 	end 
 	return true	-- indicates successful touch
 end
@@ -65,7 +104,7 @@ local function onPlayBtnRelease( event )
 		transition.to( grid, { time=500, alpha=1, transition=easing.inQuad } )
 
 		--StartLevel()
-		storyboard.gotoScene( "level1" )
+		storyboard.gotoScene( "level1", options )
 	end 
 	return true	-- indicates successful touch
 end
@@ -125,7 +164,7 @@ end
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-	
+	local group = self.view
 end
 
 
@@ -137,6 +176,10 @@ function scene:enterScene( event )
 	drawPlayBtn()
 	drawAchievementsBtn()
 	drawGrid()
+
+	group:insert( grid )
+	group:insert( play )
+	group:insert( achievements )
 
 	-- INSERT code here (e.g. start timers, load audio, start listeners, etc.)
 	
