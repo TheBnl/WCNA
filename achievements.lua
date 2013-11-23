@@ -47,11 +47,18 @@ local options =
     time = 400
 }
 
+-- font fix
+if system.getInfo("environment") == "simulator" then simulator = true end
+yFixSmall = 6
+if simulator then
+    yFixSmall = 0
+end
+
 -- create a group for the background grid lines
 local grid, sliderBox, slide = display.newGroup(), display.newGroup(), display.newGroup()
 
 -- polygon fill options
-local widthheight, isclosed, isperpixel = 1, false, false
+local widthheight, isclosed, isperpixel = 0.25, false, false
 
 -- grid square width and height variables
 local gridWidth = math.floor(320/9)
@@ -71,8 +78,8 @@ local linesY = {2,3,6,7}
 -- quotes
 local quotes = {
 	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
+	{"More play is always welcomed and needed. Wim will undoubtedly have hit a high point in creat- ivity and serious play in this app.", "April Greiman"},
+	{"New Alphabet recognised that the reading habits are in the process of change and we spend significant periods of time reading on screens. Even before that shift happened.", "Peter Bilak "},
 	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
 	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
 	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
@@ -129,6 +136,9 @@ local function scrollListener( event )
         print( "Ended" )
     end
 
+    -- resume transition so back button will appear
+    transition.resume()
+
     -- If we have reached one of the scrollViews limits
     if event.limitReached then
 		if "left" == direction then
@@ -162,9 +172,9 @@ local function drawSlide( nr )
 	local contentGroup = display.newGroup()
 
 	local quote = quotes[nr]
-	local w, h = gridWidth * 5, gridHeight * 4
-	local cX, cY = ( gridWidth * 2 ) + (( w + gridWidth ) * ( nr - 1 )), gridHeight * 5
-	local fX, fY = ( gridWidth * 2 ) + (( w + gridWidth ) * ( nr - 1 )), ( gridHeight * 9 ) + 16
+	local w, h = gridWidth * 5, gridHeight * 5
+	local cX, cY = ( gridWidth * 2 ) + (( w + gridWidth ) * ( nr - 1 )), gridHeight * 4
+	local fX, fY = ( gridWidth * 2 ) + (( w + gridWidth ) * ( nr - 1 )), ( gridHeight * 9 ) + 16 + yFixSmall
 	local tX, tY = ( gridWidth * 2 ) + (( w + gridWidth ) * ( nr - 1 )), gridHeight * 11
 
 	content = display.newText( quote[1], cX, cY, w, h, "Gridnik", 18 )
@@ -175,16 +185,16 @@ local function drawSlide( nr )
 	from:setFillColor( 0, 0, 0 )
 	contentGroup:insert(from)
 
---[[ 
+
 	-- twitter integration for a later version
 	tweet = display.newRect( tX, tY, gridWidth, gridHeight )
 	tweet:setFillColor(0,172,237)
 	contentGroup:insert(tweet)
 
-	tweetIMG = display.newImage( "twit.png" )
-	tweetIMG:translate( tX, tY )
+	tweetIMG = display.newImageRect( "twit.png", gridWidth, gridHeight )
+	tweetIMG:translate( tX + (gridWidth/2), tY + (gridHeight/2))
 	contentGroup:insert(tweetIMG)
-]]
+
 	slide:insert( contentGroup )
 	sliderBox:insert(slide)
 
@@ -249,30 +259,23 @@ end
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 	local group = self.view
+
 	-- draw the grid
 	drawGrid()	
---[[
-	local space = display.newRect( 0, 0, 0 + (slideWidth * #quotes), 480)
-	space.alpha = 0
-	scrollView:insert(space)
-]]
+
 	-- place the quotes
 	for i=1, #levels do
 		drawSlide(i)
 	end
 
 	scrollView:insert( sliderBox )
-
 	drawPrevButton()
-	--scrollView:scrollToPosition({x = -370 , time=500 })
-
-	-- sliderBox:addEventListener( "touch", scrollListener )
-	--scrollView:scrollToPosition({x = 500 * -1 , time=500 })
-
+	
+	
 	group:insert( grid )
+	
 	group:insert( scrollView )
 	group:insert( prevButton )
-
 end
 
 
@@ -280,8 +283,6 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
-
-	
 
 	-- INSERT code here (e.g. start timers, load audio, start listeners, etc.)
 	

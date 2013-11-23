@@ -20,7 +20,13 @@ require("mathlib")
 -- levelstorage
 local levelstorage = require("levelstorage")
 
-------------------
+-- timeScore
+local ScoreStorage = require("timescore")
+
+--------------------------------------------
+-- grid square width and height variables
+local gridWidth = math.floor(320/9)
+local gridHeight = math.floor(568/15)
 
 -- what level?
 levels =
@@ -40,6 +46,10 @@ for i=1, #levels do
 	end
 end
 
+-- time
+timeScore = { 0, }
+timeScore = loadScore()
+
 -- change story board options
 local options =
 {
@@ -48,14 +58,10 @@ local options =
 }
 
 -- create a group for the background grid lines
-local grid, sliderBox, slide = display.newGroup(), display.newGroup(), display.newGroup()
+local grid, sliderBox, slide, gameOver, highScore = display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup()
 
 -- polygon fill options
-local widthheight, isclosed, isperpixel = 1, false, false
-
--- grid square width and height variables
-local gridWidth = math.floor(320/9)
-local gridHeight = math.floor(568/15)
+local widthheight, isclosed, isperpixel = 0.25, false, false
 
 -- slidewidth
 local slideWidth = gridWidth * 6
@@ -68,36 +74,27 @@ display.setDefault( "background", 255, 255, 255 )
 local linesX = {3,4,5,6,9,10,11,12}
 local linesY = {2,3,6,7}
 
--- quotes
-local quotes = {
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"}
-}
 
 local function endAnimation()
 	--transition.to( grid, { time=300, alpha=0.2, transition=easing.outQuad } )
 	transition.to( prevButton, { time=800, alpha=0, y=-90, transition=easing.outQuad } )
 	transition.to( slide, { time=300, alpha=0, transition=easing.outQuad } )
+end
+
+local function onAchievementsBtnRelease( event )
+	if event.phase == "began" then
+
+		if levels[1] == 1 then
+			print("go to achievements")
+			transition.to( play, { time=500, alpha=0, transition=easing.outQuad } )
+			transition.to( achievements, { time=500, alpha=0, transition=easing.outQuad } )
+			storyboard.gotoScene( "achievements", options )
+		else
+			alertAchievement()
+		end
+		
+	end 
+	return true	-- indicates successful touch
 end
 
 local function onPrevBtnRelease( event )
@@ -109,85 +106,18 @@ local function onPrevBtnRelease( event )
 	return true	-- indicates successful touch
 end
 
+-- draw achievements button
+local function drawAchievementsBtn()
 
+	local x = gridWidth * 2
+	local y = gridHeight * 10 + 14
 
-local function scrollListener( event )
-    local phase = event.phase
-    local direction = event.direction
-    local target = event.target
+	achievements = display.newText( "achievements", x, y, "New-Alphabet", 39.5 )
+	achievements:setFillColor( 0, 0, 0 )
+	achievements:addEventListener( "touch", onAchievementsBtnRelease )
 
-    print(event.name)
-
-    --print(direction)
-    --print(target)
-
-    if "began" == phase then
-        print( "Began" )
-    elseif "moved" == phase then
-        print( "Moved" )
-    elseif phase == "ended" then
-        print( "Ended" )
-    end
-
-    -- If we have reached one of the scrollViews limits
-    if event.limitReached then
-		if "left" == direction then
-            print( "Reached Left Limit" )
-        elseif "right" == direction then
-            print( "Reached Right Limit" )
-        end
-    end
-
-    return true
-end
-
--- Create a ScrollView
-scrollView = widget.newScrollView
-{
-    top = gridHeight * 1.5,
-    left = 0,
-    width = display.contentWidth,
-    height = display.contentHeight - ( gridHeight * 3 ),
-    scrollWidth = sliderBox.width + display.contentWidth,
-    scrollHeight = slide.height,
-    listener = scrollListener,
-    verticalScrollDisabled = true,
-    hideBackground = true,
-    hideScrollBar = true,
-    --friction = 0,
-    rightPadding = -( gridWidth * 2.45 ) - ( slideWidth * ( unlocks ) ),
-}
-
-local function drawSlide( nr )
-	local contentGroup = display.newGroup()
-
-	local quote = quotes[nr]
-	local w, h = gridWidth * 5, gridHeight * 4
-	local cX, cY = ( gridWidth * 2 ) + (( w + gridWidth ) * ( nr - 1 )), gridHeight * 5
-	local fX, fY = ( gridWidth * 2 ) + (( w + gridWidth ) * ( nr - 1 )), ( gridHeight * 9 ) + 16
-	local tX, tY = ( gridWidth * 2 ) + (( w + gridWidth ) * ( nr - 1 )), gridHeight * 11
-
-	content = display.newText( quote[1], cX, cY, w, h, "Gridnik", 18 )
-	content:setFillColor( 0, 0, 0 )
-	contentGroup:insert(content)
-
-	from = display.newText( quote[2], fX, fY, "Gridnik", 18 )
-	from:setFillColor( 0, 0, 0 )
-	contentGroup:insert(from)
-
---[[ 
-	-- twitter integration for a later version
-	tweet = display.newRect( tX, tY, gridWidth, gridHeight )
-	tweet:setFillColor(0,172,237)
-	contentGroup:insert(tweet)
-
-	tweetIMG = display.newImage( "twit.png" )
-	tweetIMG:translate( tX, tY )
-	contentGroup:insert(tweetIMG)
-]]
-	slide:insert( contentGroup )
-	sliderBox:insert(slide)
-
+	achievements.alpha = 0
+	transition.to( achievements, { time=500, alpha=1, transition=easing.inQuad } )
 end
 
 local function drawPrevButton()
@@ -204,6 +134,40 @@ local function drawPrevButton()
 	prevButton.y = -90
 
 	transition.to( prevButton, { time=1000, alpha=1, y=0, transition=easing.inQuad } )
+end
+
+-- draw Game ending
+local function drawGameOver()
+
+	local x = gridWidth * 2
+	local gY = gridHeight * 3 - 30
+	local oY = gridHeight * 5 - 30
+
+	game = display.newText( "game", x, gY, "New-Alphabet", 121 )
+	game:setFillColor( 0, 0, 0 )
+	gameOver:insert( game )
+
+	over = display.newText( "over", x, oY, "New-Alphabet", 121 )
+	over:setFillColor( 0, 0, 0 )
+	gameOver:insert( over )
+end
+
+-- draw Score
+local function drawScore()
+
+	local totalScore = timeScore[1]
+	
+	local sX = gridWidth * 2
+	local iX = gridWidth * 4 + 18.5
+	local y = gridHeight * 9 + 14
+
+	score = display.newText( "score", sX, y, "New-Alphabet", 39.5 )
+	score:setFillColor( 0, 0, 0 )
+	highScore:insert( score )
+
+	scoreInt = display.newText( totalScore, iX, y, "New-Alphabet", 39.5 )
+	scoreInt:setFillColor( 0, 0, 0 )
+	highScore:insert( scoreInt )
 
 end
 
@@ -251,27 +215,18 @@ function scene:createScene( event )
 	local group = self.view
 	-- draw the grid
 	drawGrid()	
---[[
-	local space = display.newRect( 0, 0, 0 + (slideWidth * #quotes), 480)
-	space.alpha = 0
-	scrollView:insert(space)
-]]
-	-- place the quotes
-	for i=1, #levels do
-		drawSlide(i)
-	end
-
-	scrollView:insert( sliderBox )
 
 	drawPrevButton()
-	--scrollView:scrollToPosition({x = -370 , time=500 })
-
-	-- sliderBox:addEventListener( "touch", scrollListener )
-	--scrollView:scrollToPosition({x = 500 * -1 , time=500 })
+	drawAchievementsBtn()
+	drawGameOver()
+	drawScore()
 
 	group:insert( grid )
-	group:insert( scrollView )
+	group:insert( score )
+	group:insert( gameOver )
+	group:insert( highScore )
 	group:insert( prevButton )
+	group:insert( achievements )
 
 end
 

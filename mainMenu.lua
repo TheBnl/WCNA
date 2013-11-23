@@ -4,6 +4,8 @@
 --
 -----------------------------------------------------------------------------------------
 
+print( display.pixelWidth / display.actualContentWidth )
+
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 
@@ -44,6 +46,15 @@ display.setDefault( "background", 255, 255, 255 )
 -- line data
 local linesX = {3,4,5,6,9,10,11,12}
 local linesY = {2,3,6,7}
+
+-- font fix
+if system.getInfo("environment") == "simulator" then simulator = true end
+yFixBig = 14
+yFixSmall = 6
+if simulator then
+    yFixBig = 0
+    yFixSmall = 0
+end
 
 
 -- alert
@@ -113,14 +124,14 @@ end
 local function drawPlayBtn()
 
 	local x = gridWidth * 2
-	local y = gridHeight * 5 -30
+	local y = ( gridHeight * 5 -30 ) + yFixBig
 
 	play = display.newText( "play", x, y, "New-Alphabet", 121 )
 	play:setFillColor( 0, 0, 0 )
 	play:addEventListener( "touch", onPlayBtnRelease )
 
-	play.alpha = 0
-	transition.to( play, { time=500, alpha=1, transition=easing.inQuad } )
+	play.alpha = 1
+	--transition.to( play, { time=500, alpha=1, transition=easing.inQuad } )
 
 end
 
@@ -143,14 +154,14 @@ end
 local function drawAchievementsBtn()
 
 	local x = gridWidth * 2
-	local y = gridHeight * 10 + 14
+	local y = ( gridHeight * 10 + 14 ) + yFixSmall
 
 	achievements = display.newText( "achievements", x, y, "New-Alphabet", 39.5 )
 	achievements:setFillColor( 0, 0, 0 )
 	achievements:addEventListener( "touch", onAchievementsBtnRelease )
 
-	achievements.alpha = 0
-	transition.to( achievements, { time=500, alpha=1, transition=easing.inQuad } )
+	achievements.alpha = 1
+	--transition.to( achievements, { time=500, alpha=1, transition=easing.inQuad } )
 
 end
 

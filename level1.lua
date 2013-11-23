@@ -20,16 +20,25 @@ require("mathlib")
 -- levelstorage
 local levelstorage = require("levelstorage")
 
--- timestorage
---local timestorage = require("timestorage")
+-- timeScore
+local ScoreStorage = require("timescore")
 
 --------------------------------------------
+-- grid square width and height variables
+local gridWidth = math.floor(320/9)
+local gridHeight = math.floor(568/15)
+
 
 -- levels
-currentLevel = 1
-totalLevels = 22
-currentChar = "c"
-nextLevel = "level2"
+local currentLevel = 1
+local totalLevels = 22
+local currentChar = "c"
+local nextLevel = "level2"
+
+-- timer options
+local time = 1000
+local totalTime = 1000
+local timerWidth = gridWidth * 3
 
 -- change story board options
 local options =
@@ -47,29 +56,29 @@ levels =
 }
 levels = loadLevels()
 
---[[ time
-timeLimit = 
-{ 
-	time = 4000, -- time
-	width = 105, -- width
-	posX = 105, -- x pos
-}
-timeLimit = loadTime()
-ttl = 4000
-]]
+-- time
+timeScore = { 0, }
+timeScore = loadScore()
+
+-- level 1 reset
+timeScore[1] = 0
+
 -- create a group for the background grid lines
 local grid, blocksGroup, dotGroup, cornerGroup, correctGroup, wrongGroup, levelIndicator = display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup()
 
 -- polygon fill options
-local widthheight, isclosed, isperpixel = 1, false, false
+local widthheight, isclosed, isperpixel = 0.25, false, false
 
 -- wrong or right animation
 local trans
 local transitions = 0
 
--- grid square width and height variables
-local gridWidth = math.floor(320/9)
-local gridHeight = math.floor(568/15)
+-- font fix
+if system.getInfo("environment") == "simulator" then simulator = true end
+yFixSmall = 6
+if simulator then
+    yFixSmall = 0
+end
 
 display.setDefault( "background", 255, 255, 255 )
 
@@ -1368,13 +1377,14 @@ local function alertMissing()
 	y = 55
 	w = math.floor(gridWidth * 3)
 	h = math.floor(gridHeight * 2)
+	tY = 90 + yFixSmall
 
 	local alertMissing = display.newText( "Something is missing", x, y, w, h, "Gridnik", 16 )
 	alertMissing:setFillColor( 0, 0, 0 )
 
 	alertMissing.y = -20
 	alertMissing.alpha = 0
-	transition.to( alertMissing, { time=500, alpha=1, y=90, transition=easing.inQuad } )
+	transition.to( alertMissing, { time=500, alpha=1, y=tY, transition=easing.inQuad } )
 	transition.to( alertMissing, { time=500, delay=1400, alpha=0, y=-20, transition=easing.outQuad } )
 end
 
@@ -1387,13 +1397,14 @@ local function alertWrong()
 	y = 55
 	w = math.floor(gridWidth * 3)
 	h = math.floor(gridHeight * 2)
+	tY = 90 + yFixSmall
 
 	local alertWrong = display.newText( "Something is wrong", x, y, w, h, "Gridnik", 16 )
 	alertWrong:setFillColor( 0, 0, 0 )
 
 	alertWrong.y = -20
 	alertWrong.alpha = 0
-	transition.to( alertWrong, { time=500, alpha=1, y=90, transition=easing.inQuad } )
+	transition.to( alertWrong, { time=500, alpha=1, y=tY, transition=easing.inQuad } )
 	transition.to( alertWrong, { time=500, delay=1400, alpha=0, y=-20, transition=easing.outQuad } )
 end
 
@@ -1406,6 +1417,7 @@ local function alertFact( i )
 	y = 55
 	w = math.floor(gridWidth * 3)
 	h = math.floor(gridHeight * 2)
+	tY = 90 + yFixSmall
 
 	string = "Fact "..i.." unlocked!"
 	print(string)
@@ -1415,59 +1427,82 @@ local function alertFact( i )
 
 	alertFact.y = -20
 	alertFact.alpha = 0
-	transition.to( alertFact, { time=500, alpha=1, y=90, transition=easing.inQuad } )
+	transition.to( alertFact, { time=500, alpha=1, y=tY, transition=easing.inQuad } )
 	transition.to( alertFact, { time=500, delay=1600, alpha=0, y=-20, transition=easing.outQuad } )
 end
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 --            TIMER FUNCTIONS             --
---[[  -- -- -- -- -- -- -- -- -- -- -- -- --
-local function resetTime()
-	print("timer reset")
-	timeLimit.time = 4000
-	timeLimit.width = 105
-	timeLimit.posX = 105
-	saveTime()
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+local function resetScore()
+	print("score reset")
+	print(timeScore[1])
+	timer.cancel( scoreTimer )
+	timeScore[1] = 0
+	timeLeft.width = gridWidth * 3
+	time = 1000
+end
+
+local function exitScore()
+	print("score reset")
+	timeScore[1] = 0
+	saveScore()
+
+	timer.cancel( scoreTimer )
+	timeLeft.width = gridWidth * 3
+	time = 1000
+end
+
+local function saveCurrScore()
+	print("save score")
+	timer.cancel( scoreTimer )
+	timeScore[1] = timeScore[1] + time
+	saveScore()
+
+	print("currnet score: "..timeScore[1])
+
+	timer.cancel( scoreTimer )
+	timeScore[1] = 0
+	timeLeft.width = gridWidth * 3
+	time = 1000
 end
 
 local function drawTimer()
 
 	print(gridWidth * 3)
 
-	local x = timeLimit.posX
+	local x = gridWidth * 3
 	local y = ( display.viewableContentHeight - 5 ) + display.screenOriginY
-	local w = timeLimit.width
+	local w = gridWidth * 3
 	local h = 10 
 
 	timeLeft = display.newRect( x, y, w, h )
 	timeLeft:setFillColor(0,0,0)
 	timeLeft.alpha = 0
+	--timeLeft.y = -10
 
 	transition.to( timeLeft, { time=300, alpha=1, transition=easing.inQuad } )
 end
 
-local function stopTimer( timerID )
-	print("timer stopped")
-	timer.cancel( timerID )
-end
-
 local function timerDown()
 
+	local t = totalTime -- total time
+
 	timeLeft:setReferencePoint( display.CenterLeftReferencePoint )
-	timeLimit.time = timeLimit.time - 1
+	time = time - 1
 
-	timeLeft.width = ( timeLimit.width / ttl ) * timeLimit.time
+	timeLeft.width = ( timerWidth / t ) * time
 
-	timeLeft.x = 105 - (timeLimit.width / ( ttl * 2 )) 
+	timeLeft.x = 105 - (timerWidth / ( t * 2 )) 
 
-	timeLimit.posX, timeLimit.width = timeLeft.x, timeLeft.width
-
-	if(timeLimit.time == 0)then
+	if( time == 0 )then
 		print("Time Out") -- or do your code for time out
-		resetTime()
+		print(timeScore[1])
+		--timeScore[1] = timeScore[1] + 0
+		saveScore()
 	end
 end
-]]
+
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 --          FACT UNLOCKED MESSAGE         --
@@ -1534,10 +1569,15 @@ local function onNextBtnRelease( event )
 				alertFact(currentLevel)
 			end
 
+			-- save levels
 			levels[currentLevel] = 1
 			saveLevels()
+			
+			-- save score
+			saveCurrScore()
+
 			storyboard.gotoScene( nextLevel, options )
-			newLevelAnimation()
+			--newLevelAnimation()
 			--endAnimation()
 
 		elseif correct > 0 and wrong == #falseBlocks then
@@ -1574,6 +1614,8 @@ end
 local function onPrevBtnRelease( event )
 	if event.phase == "began" then
 		print("Go to main menu")
+		exitScore()
+		--resetScore()
 		endAnimation()
 		storyboard.gotoScene( "mainMenu", options )
 	end 
@@ -1705,6 +1747,7 @@ function scene:createScene( event )
 	drawPrevButton()
 	drawGrid()
 	drawLevelIndicator( currentLevel, currentChar )
+	drawTimer()
 
 	group:insert( grid )
 	group:insert( blocksGroup )
@@ -1712,6 +1755,7 @@ function scene:createScene( event )
 	group:insert( nextButton )
 	group:insert( prevButton )
 	group:insert( levelIndicator )
+	group:insert( timeLeft )
 end
 
 
@@ -1720,7 +1764,7 @@ end
 function scene:enterScene( event )
 	local group = self.view
 
-	--scoreTimer = timer.performWithDelay(1,timerDown,timeLimit.time)
+	scoreTimer = timer.performWithDelay(1,timerDown,time)
 
 	-- INSERT code here (e.g. start timers, load audio, start listeners, etc.)
 	
@@ -1730,13 +1774,6 @@ end
 function scene:exitScene( event )
 	local group = self.view
 	-- INSERT code here (e.g. stop timers, remove listenets, unload sounds, etc.)
-	resetLevel()
-	print("correct: "..correct)
-	print("wrong: "..wrong)
-	for i=1, #blocksData do
-		print("block["..i.."].display = ")
-		print(blocksGroup[i].display)
-	end
 
 	storyboard.removeAll()
 end
