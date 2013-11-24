@@ -25,6 +25,26 @@ local ScoreStorage = require("timescore")
 
 -- Game centre connection
 local gameNetwork = require "gameNetwork"
+local loggedIntoGC = false
+
+-- called after the "init" request has completed
+local function initCallback( event )
+    if event.data then
+        loggedIntoGC = true
+        print( "Success!", "User has logged into Game Center", { "OK" } )
+    else
+        loggedIntoGC = false
+        print( "Fail", "User is not logged into Game Center", { "OK" } )
+    end
+end
+
+-- function to listen for system events
+local function onSystemEvent( event ) 
+    if event.type == "applicationStart" then
+        gameNetwork.init( "gamecenter", initCallback )
+        return true
+    end
+end
 
 --------------------------------------------
 -- grid square width and height variables
@@ -69,7 +89,7 @@ local localPlayerScore = {}
 -- submit score to game centre
 gameNetwork.request( "setHighScore",
 {
-    localPlayerScore = { category="com.appledts.EasyTapList", value=totalScore },
+    localPlayerScore = { category="nl.bram-de-leeuw.wcna.highscores", value=totalScore },
     listener=requestCallback
 })
 
@@ -203,6 +223,8 @@ local function drawScore()
 	scoreInt:setFillColor( 0, 0, 0 )
 	highScore:insert( scoreInt )
 
+	highScore:addEventListener( "touch", onScoreBtnRelease )
+
 end
 
 -- draw line X
@@ -305,6 +327,8 @@ scene:addEventListener( "exitScene", scene )
 -- automatically unloaded in low memory situations, or explicitly via a call to
 -- storyboard.purgeScene() or storyboard.removeScene().
 scene:addEventListener( "destroyScene", scene )
+
+Runtime:addEventListener( "system", onSystemEvent )
 
 -----------------------------------------------------------------------------------------
 

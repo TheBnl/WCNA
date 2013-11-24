@@ -12,14 +12,14 @@ settings = {
 		plist = {
 			UIStatusBarHidden = true,
 			UIPrerenderedIcon = true, 
-			UIApplicationExitsOnSuspend = false,
+			UIApplicationExitsOnSuspend = true,
 			CFBundleIconFiles = {
-            "ico/Icon.png",
-            "ico/Icon@2x.png",
-            "ico/Icon-72.png",
-            "ico/Icon-Small-50.png",
-            "ico/Icon-Small.png",
-            "ico/Icon-Small@2x.png"
+            "icon.png",
+            "icon@2x.png",
+            "icon-72.png",
+            "icon-small-50.png",
+            "icon-small.png",
+            "icon-small@2x.png"
             },
             UIAppFonts =
             {

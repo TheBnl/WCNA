@@ -23,6 +23,28 @@ local levelstorage = require("levelstorage")
 -- timeScore
 local ScoreStorage = require("timescore")
 
+local gameNetwork = require "gameNetwork"
+local loggedIntoGC = false
+
+-- called after the "init" request has completed
+local function initCallback( event )
+    if event.data then
+        loggedIntoGC = true
+        print( "Success!", "User has logged into Game Center", { "OK" } )
+    else
+        loggedIntoGC = false
+        print( "Fail", "User is not logged into Game Center", { "OK" } )
+    end
+end
+
+-- function to listen for system events
+local function onSystemEvent( event ) 
+    if event.type == "applicationStart" then
+        gameNetwork.init( "gamecenter", initCallback )
+        return true
+    end
+end
+
 --------------------------------------------
 -- grid square width and height variables
 local gridWidth = math.floor(320/9)
@@ -1565,12 +1587,23 @@ local function onNextBtnRelease( event )
 			print("next level!")
 			print(levels[currentLevel])
 
-			if levels[currentLevel] == 2 then
+			if levels[currentLevel] == 2 and time > 0 then --and levels[currentLevel - 1] == 1 then
 				alertFact(currentLevel)
+				levels[currentLevel] = 1
+
+				gameNetwork.request( "unlockAchievement",
+				{
+				    achievement =
+				    {
+				        identifier="nl.bram-de-leeuw.wcna.fact1",
+				        percentComplete=100,
+				        showsCompletionBanner=false,
+				    }
+				})
+
 			end
 
 			-- save levels
-			levels[currentLevel] = 1
 			saveLevels()
 			
 			-- save score
@@ -1646,6 +1679,7 @@ local function drawNextButton()
 	local triangle = { x,y, x+addX,y+(addY/2), x,y+addY, x,y }
 
 	nextButton = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+
 	nextButton:addEventListener( "touch", onNextBtnRelease )
 
 	nextButton.alpha = 0
@@ -1802,6 +1836,7 @@ scene:addEventListener( "exitScene", scene )
 -- storyboard.purgeScene() or storyboard.removeScene().
 scene:addEventListener( "destroyScene", scene )
 
+Runtime:addEventListener( "system", onSystemEvent )
 -----------------------------------------------------------------------------------------
 
 return scene

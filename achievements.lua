@@ -17,13 +17,36 @@ require("displayex")
 -- include Corona's "math" library
 require("mathlib")
 
--- include GGTwitter
-local GGTwitter = require( "GGTwitter" )
+-- include GGTwitter => activate for a later release
+-- local GGTwitter = require( "GGTwitter" )
 
 -- levelstorage
 local levelstorage = require("levelstorage")
 
+local gameNetwork = require "gameNetwork"
+local loggedIntoGC = false
+
+-- called after the "init" request has completed
+local function initCallback( event )
+    if event.data then
+        loggedIntoGC = true
+        print( "Success!", "User has logged into Game Center", { "OK" } )
+    else
+        loggedIntoGC = false
+        print( "Fail", "User is not logged into Game Center", { "OK" } )
+    end
+end
+
+-- function to listen for system events
+local function onSystemEvent( event ) 
+    if event.type == "applicationStart" then
+        gameNetwork.init( "gamecenter", initCallback )
+        return true
+    end
+end
+
 -- twitter autorisation
+--[[
 local twitter
 
 local listener = function( event )
@@ -32,8 +55,8 @@ local listener = function( event )
     end
 end
 
-twitter = GGTwitter:new( "BH2z1M2WZ126GoDepqCA", "jWNYyZIazqfeLYf4UhkAXgcU4Yc09ij40LVZl9ve4", listener, "http://www.lauwenprojects.com/" )
-
+twitter = GGTwitter:new( "BH2z1M2WZ126GoDepqCA", "jWNYyZIazqfeLYf4UhkAXgcU4Yc09ij40LVZl9ve4", listener, "http://www.bram-de-leeuw.nl/" )
+]]
 ------------------
 
 -- what level?
@@ -91,28 +114,28 @@ local linesY = {2,3,6,7}
 
 -- quotes
 local quotes = {
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"More play is always welcomed and needed. Wim will undoubtedly have hit a high point in creat- ivity and serious play in this app.", "April Greiman"},
-	{"New Alphabet recognised that the reading habits are in the process of change and we spend significant periods of time reading on screens. Even before that shift happened.", "Peter Bilak "},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"},
-	{"I look to Wim Crouwel continually to inspire me to be spare, concise and to do it in perfect scale.", "Paula Scher"}
+	{"Right from the beginning my work was highly influenced by architecture, not directly but via the statements that architects delivered.", "Wim Crouwel"},
+	{"The graphic grid was a valued tool through which order in typography could be created.", "Wim Crouwel"},
+	{"The modern sans serif typeface was, as an ultimate expression of its time, preferable above classic fonts.", "Wim Crouwel"},
+	{"I became so intrigued by the first computerized typesetting in the sixties, that I thought it wise to create a specific typeface for it.", "Wim Crouwel"},
+	{"I decided that my typeface had to be constructed from straight lines and 45 degrees corners.", "Wim Crouwel"},
+	{"All letters should have an even width, whereby spacing between words should always be related to the width of an individual character.", "Wim Crouwel"},
+	{"Sometimes, while working on this project, I even thought: ‘through the computer, design finally has become democratic’.", "Wim Crouwel"},
+	{"I was intrigued by the structural experiments of De Stijl and the purifying direction of the Dessau Bauhaus.", "Wim Crouwel"},
+	{"All in all I became very interested in all sorts of modular techniques to reproduce typefaces, such as through bricklaying and through tiles.", "Wim Crouwel"},
+	{"I for myself cannot stop to believe that graphic design is first of all a means of making things clear.", "Wim Crouwel"},
+	{"Lower-case typography has two sources: one is idealistic and the other functional-rational.", "Wim Crouwel"},
+	{"For quite a while Bauhaus stationery read: ‘wir schreiben alles klein, denn wir sparen damit zeit’.", "Wim Crouwel"},
+	{"Both Jan Tschichold and Herbert Bayer made designs for a universal alphabet.", "Wim Crouwel"},
+	{"Piet Zwart developed an emphasis on a clear, open en rhythmic order of typographic elements.", "PWim Crouwel"},
+	{"I proposed a single-alphabet typeface as an answer to new functional needs.", "Wim Crouwel"},
+	{"NA was a rather theoretical proposal, since some of the characters did not have any resemblance with existing ones.", "Wim Crouwel"},
+	{"The basic principles in typography and graphic design, which were highly decisive in my career; are still valid.", "Wim Crouwel"},
+	{"Masters of Modernism: Tschichold, Bayer,Renner, Zwart, Moholy Nagy showed us how lucid the result could be.", "Wim Crouwel"},
+	{"What is it that designers in the country have, which does not effect most of the designers in other countries?", "Wim Crouwel"},
+	{"Is that missionary force a result of a general need of the Dutch to win souls?", "Wim Crouwel"},
+	{"Or is it that designers pre-eminently are the guardian angels of our consciences?", "Wim Crouwel"},
+	{"I believe the disappearance of utopias is a great loss for the current intellectual and artistically minded debate.", "Wim Crouwel"}
 }
 
 local function endAnimation()
@@ -130,6 +153,7 @@ local function onPrevBtnRelease( event )
 	return true	-- indicates successful touch
 end
 
+--[[
 local function onTweetBtnRelease( event )
 	if event.phase == "began" then
 		print("Tweet: "..event.target.message)
@@ -137,8 +161,7 @@ local function onTweetBtnRelease( event )
 	end 
 	return true	-- indicates successful touch
 end
-
-
+]]
 
 local function scrollListener( event )
     local phase = event.phase
@@ -207,7 +230,7 @@ local function drawSlide( nr )
 	from:setFillColor( 0, 0, 0 )
 	contentGroup:insert(from)
 
-
+	--[[
 	-- twitter integration for a later version
 	tweet = display.newRect( tX, tY, gridWidth, gridHeight )
 	tweet:setFillColor(0,172,237)
@@ -222,10 +245,9 @@ local function drawSlide( nr )
 	print(message)
 
 	tweetIMG:addEventListener( "touch", onTweetBtnRelease )
-
+	]]
 	slide:insert( contentGroup )
 	sliderBox:insert(slide)
-
 end
 
 local function drawPrevButton()
@@ -289,7 +311,7 @@ function scene:createScene( event )
 	
 	local group = self.view
 
-	twitter:authorise()
+	--twitter:authorise()
 
 	-- draw the grid
 	drawGrid()	
@@ -302,8 +324,8 @@ function scene:createScene( event )
 	scrollView:insert( sliderBox )
 	drawPrevButton()
 	
-	print("twitter?")
-	print( twitter:isAuthorised() )
+	--print("twitter?")
+	--print( twitter:isAuthorised() )
 	
 	group:insert( grid )
 	group:insert( scrollView )
@@ -349,6 +371,8 @@ scene:addEventListener( "exitScene", scene )
 -- automatically unloaded in low memory situations, or explicitly via a call to
 -- storyboard.purgeScene() or storyboard.removeScene().
 scene:addEventListener( "destroyScene", scene )
+
+Runtime:addEventListener( "system", onSystemEvent )
 
 -----------------------------------------------------------------------------------------
 
