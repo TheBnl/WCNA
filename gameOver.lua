@@ -23,6 +23,9 @@ local levelstorage = require("levelstorage")
 -- timeScore
 local ScoreStorage = require("timescore")
 
+-- Game centre connection
+local gameNetwork = require "gameNetwork"
+
 --------------------------------------------
 -- grid square width and height variables
 local gridWidth = math.floor(320/9)
@@ -46,9 +49,34 @@ for i=1, #levels do
 	end
 end
 
+-- font fix
+if system.getInfo("environment") == "simulator" then simulator = true end
+yFixBig = 14
+yFixSmall = 6
+if simulator then
+    yFixBig = 0
+    yFixSmall = 0
+end
+
 -- time
 timeScore = { 0, }
 timeScore = loadScore()
+
+local totalScore = timeScore[1]
+
+local localPlayerScore = {}
+
+-- submit score to game centre
+gameNetwork.request( "setHighScore",
+{
+    localPlayerScore = { category="com.appledts.EasyTapList", value=totalScore },
+    listener=requestCallback
+})
+
+local function onGameNetworkPopupDismissed( event )
+    -- The shown Game Center popup was closed.
+    print("GC popup closed")
+end
 
 -- change story board options
 local options =
@@ -97,6 +125,14 @@ local function onAchievementsBtnRelease( event )
 	return true	-- indicates successful touch
 end
 
+local function onScoreBtnRelease( event )
+	if event.phase == "began" then
+		print("Show leaderboards")
+		gameNetwork.show( "leaderboards", { leaderboard = {timeScope="AllTime"}, listener=onGameNetworkPopupDismissed } )
+	end 
+	return true	-- indicates successful touch
+end
+
 local function onPrevBtnRelease( event )
 	if event.phase == "began" then
 		print("Go to main menu")
@@ -110,7 +146,7 @@ end
 local function drawAchievementsBtn()
 
 	local x = gridWidth * 2
-	local y = gridHeight * 10 + 14
+	local y = gridHeight * 10 + 14 + yFixSmall
 
 	achievements = display.newText( "achievements", x, y, "New-Alphabet", 39.5 )
 	achievements:setFillColor( 0, 0, 0 )
@@ -140,8 +176,8 @@ end
 local function drawGameOver()
 
 	local x = gridWidth * 2
-	local gY = gridHeight * 3 - 30
-	local oY = gridHeight * 5 - 30
+	local gY = gridHeight * 3 - 30 + yFixBig
+	local oY = gridHeight * 5 - 30 + yFixBig
 
 	game = display.newText( "game", x, gY, "New-Alphabet", 121 )
 	game:setFillColor( 0, 0, 0 )
@@ -154,12 +190,10 @@ end
 
 -- draw Score
 local function drawScore()
-
-	local totalScore = timeScore[1]
 	
 	local sX = gridWidth * 2
 	local iX = gridWidth * 4 + 18.5
-	local y = gridHeight * 9 + 14
+	local y = gridHeight * 9 + 14 + yFixSmall
 
 	score = display.newText( "score", sX, y, "New-Alphabet", 39.5 )
 	score:setFillColor( 0, 0, 0 )

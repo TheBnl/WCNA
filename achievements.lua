@@ -17,8 +17,22 @@ require("displayex")
 -- include Corona's "math" library
 require("mathlib")
 
+-- include GGTwitter
+local GGTwitter = require( "GGTwitter" )
+
 -- levelstorage
 local levelstorage = require("levelstorage")
+
+-- twitter autorisation
+local twitter
+
+local listener = function( event )
+    if event.phase == "authorised" then
+
+    end
+end
+
+twitter = GGTwitter:new( "BH2z1M2WZ126GoDepqCA", "jWNYyZIazqfeLYf4UhkAXgcU4Yc09ij40LVZl9ve4", listener, "http://www.lauwenprojects.com/" )
 
 ------------------
 
@@ -116,6 +130,14 @@ local function onPrevBtnRelease( event )
 	return true	-- indicates successful touch
 end
 
+local function onTweetBtnRelease( event )
+	if event.phase == "began" then
+		print("Tweet: "..event.target.message)
+		twitter:post( event.target.message )
+	end 
+	return true	-- indicates successful touch
+end
+
 
 
 local function scrollListener( event )
@@ -195,6 +217,12 @@ local function drawSlide( nr )
 	tweetIMG:translate( tX + (gridWidth/2), tY + (gridHeight/2))
 	contentGroup:insert(tweetIMG)
 
+	tweetIMG.message = quote[1].." -"..quote[2].." #WCNA www.bram-de-leeuw.nl"
+
+	print(message)
+
+	tweetIMG:addEventListener( "touch", onTweetBtnRelease )
+
 	slide:insert( contentGroup )
 	sliderBox:insert(slide)
 
@@ -258,7 +286,10 @@ end
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
+	
 	local group = self.view
+
+	twitter:authorise()
 
 	-- draw the grid
 	drawGrid()	
@@ -271,9 +302,10 @@ function scene:createScene( event )
 	scrollView:insert( sliderBox )
 	drawPrevButton()
 	
+	print("twitter?")
+	print( twitter:isAuthorised() )
 	
 	group:insert( grid )
-	
 	group:insert( scrollView )
 	group:insert( prevButton )
 end
