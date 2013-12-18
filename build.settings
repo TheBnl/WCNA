@@ -14,12 +14,12 @@ settings = {
 			UIPrerenderedIcon = true, 
 			UIApplicationExitsOnSuspend = true,
 			CFBundleIconFiles = {
-            "icon.png",
-            "icon@2x.png",
-            "icon-72.png",
-            "icon-small-50.png",
-            "icon-small.png",
-            "icon-small@2x.png"
+            "Icon.png",
+            "Icon@2x.png",
+            "Icon-72.png",
+            "Icon-Small-50.png",
+            "Icon-Small.png",
+            "Icon-Small@2x.png"
             },
             UIAppFonts =
             {
@@ -28,13 +28,4 @@ settings = {
             },
 		}
 	},
-	
-	--[[
-	-- Android permissions
-
-	androidPermissions = {
-  		"android.permission.INTERNET",
-  	},
-
-	]]--
 }

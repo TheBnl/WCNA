@@ -92,7 +92,7 @@ if simulator then
 end
 
 -- create a group for the background grid lines
-local grid, sliderBox, slide = display.newGroup(), display.newGroup(), display.newGroup()
+local grid, sliderBox, slide, prevButton = display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup()
 
 -- polygon fill options
 local widthheight, isclosed, isperpixel = 0.25, false, false
@@ -257,7 +257,14 @@ local function drawPrevButton()
 
 	local triangle = { x,y+(addY/2), x+addX,y, x+addX,y+addY, x,y+(addY/2) }
 
-	prevButton = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+
+	local bg = display.newRect( x-12, y-12, 50, 50 )
+	bg:setFillColor( 255,255,255 )
+	prevButton:insert( bg )
+
+	arrow = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+	prevButton:insert( arrow )
+
 	prevButton:addEventListener( "touch", onPrevBtnRelease )
 
 	prevButton.alpha = 0

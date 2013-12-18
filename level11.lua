@@ -92,7 +92,7 @@ if simulator then
 end
 
 -- create a group for the background grid lines
-local grid, blocksGroup, dotGroup, cornerGroup, correctGroup, wrongGroup, levelIndicator = display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup()
+local grid, blocksGroup, dotGroup, cornerGroup, correctGroup, wrongGroup, levelIndicator, prevButton, nextButton = display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup(), display.newGroup()
 
 -- polygon fill options
 local widthheight, isclosed, isperpixel = 0.25, false, false
@@ -1651,12 +1651,19 @@ local function drawNextButton()
 
 	local triangle = { x,y, x+addX,y+(addY/2), x,y+addY, x,y }
 
-	nextButton = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+	local bg = display.newRect( x-12, y-12, 50, 50 )
+	bg:setFillColor( 255,255,255 )
+	nextButton:insert( bg )
+
+	local arrow = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+	nextButton:insert( arrow )
+
 	nextButton:addEventListener( "touch", onNextBtnRelease )
 
-	nextButton.alpha = 0.9
+	nextButton.alpha = 0
+	nextButton.y = -90
 
-	transition.to( nextButton, { time=10, alpha=1, y=0, transition=easing.inQuad } )
+	transition.to( nextButton, { time=1000, alpha=1, y=0, transition=easing.inQuad } )
 end
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -1670,12 +1677,21 @@ local function drawPrevButton()
 
 	local triangle = { x,y+(addY/2), x+addX,y, x+addX,y+addY, x,y+(addY/2) }
 
-	prevButton = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+
+	local bg = display.newRect( x-12, y-12, 50, 50 )
+	bg:setFillColor( 255,255,255 )
+	prevButton:insert( bg )
+
+	arrow = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+	prevButton:insert( arrow )
+
 	prevButton:addEventListener( "touch", onPrevBtnRelease )
 
-	prevButton.alpha = 0.9
+	prevButton.alpha = 0
+	prevButton.y = -90
 
-	transition.to( prevButton, { time=10, alpha=1, y=0, transition=easing.inQuad } )
+	transition.to( prevButton, { time=1000, alpha=1, y=0, transition=easing.inQuad } )
+
 end
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
