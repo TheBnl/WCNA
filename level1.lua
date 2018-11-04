@@ -5,8 +5,8 @@
 --
 -----------------------------------------------------------------------------------------
 
-local storyboard = require( "storyboard" )
-local scene = storyboard.newScene()
+local composer = require( "composer" )
+local scene = composer.newScene()
 
 -- include Corona's "widget" library
 local widget = require "widget"
@@ -1250,6 +1250,8 @@ function blockObject:drawBlock(i)
 		)
 
 		rect:setFillColor( 0, 0, 0 )
+		rect.anchorX = 0
+		rect.anchorY = 0
 		rect.alpha = 0
 		self:increaseId()
 
@@ -1395,13 +1397,14 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function alertMissing()
-	x = math.floor(gridWidth * 3 + 4)
-	y = 55
-	w = math.floor(gridWidth * 3)
-	h = math.floor(gridHeight * 2)
-	tY = 90 + yFixSmall
+	local x = math.floor(gridWidth * 3 + 4)
+	local y = 55
+	local w = math.floor(gridWidth * 3)
+	local h = math.floor(gridHeight * 2)
+	local tY = 90 + yFixSmall
 
 	local alertMissing = display.newText( "Something is missing", x, y, w, h, "Gridnik", 16 )
+	alertMissing.anchorX = 0
 	alertMissing:setFillColor( 0, 0, 0 )
 
 	alertMissing.y = -20
@@ -1415,13 +1418,14 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function alertWrong()
-	x = math.floor(gridWidth * 3 + 4)
-	y = 55
-	w = math.floor(gridWidth * 3)
-	h = math.floor(gridHeight * 2)
-	tY = 90 + yFixSmall
+	local x = math.floor(gridWidth * 3 + 4)
+	local y = 55
+	local w = math.floor(gridWidth * 3)
+	local h = math.floor(gridHeight * 2)
+	local tY = 90 + yFixSmall
 
 	local alertWrong = display.newText( "Something is wrong", x, y, w, h, "Gridnik", 16 )
+	alertWrong.anchorX = 0
 	alertWrong:setFillColor( 0, 0, 0 )
 
 	alertWrong.y = -20
@@ -1435,13 +1439,13 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function alertFact( i )
-	x = math.floor(gridWidth * 3 + 4)
-	y = 55
-	w = math.floor(gridWidth * 3)
-	h = math.floor(gridHeight * 2)
-	tY = 90 + yFixSmall
+	local x = math.floor(gridWidth * 3 + 4)
+	local y = 55
+	local w = math.floor(gridWidth * 3)
+	local h = math.floor(gridHeight * 2)
+	local tY = 90 + yFixSmall
 
-	string = "Fact "..i.." unlocked!"
+	local string = "Fact "..i.." unlocked!"
 	print(string)
 
 	local alertFact = display.newText( string, x, y, w, h, "Gridnik", 16 )
@@ -1496,9 +1500,11 @@ local function drawTimer()
 	local x = gridWidth * 3
 	local y = ( display.viewableContentHeight - 5 ) + display.screenOriginY
 	local w = gridWidth * 3
-	local h = 10 
+	local h = 10
 
 	timeLeft = display.newRect( x, y, w, h )
+	timeLeft.anchorX = 0
+	timeLeft.anchorY = 0.5
 	timeLeft:setFillColor(0,0,0)
 	timeLeft.alpha = 0
 	--timeLeft.y = -10
@@ -1510,7 +1516,7 @@ local function timerDown()
 
 	local t = totalTime -- total time
 
-	timeLeft:setReferencePoint( display.CenterLeftReferencePoint )
+	--timeLeft:setReferencePoint( display.CenterLeftReferencePoint )
 	time = time - 1
 
 	timeLeft.width = ( timerWidth / t ) * time
@@ -1532,19 +1538,19 @@ end
 
 local function drawLevelIndicator( level, char )
 
-	charX = math.floor(gridWidth * 4.5)
-	levelX = math.floor(gridWidth * 4.5)
+	local charX = math.floor(gridWidth * 4.5)
+	local levelX = math.floor(gridWidth * 4.5)
 
-	levelString = level.."/"..totalLevels
+	local levelString = level.."/"..totalLevels
 
 	local char = display.newText( char, 0, 0, "Gridnik", 16 )
 	char:setFillColor( 0, 0, 0 )
-	char:setReferencePoint( display.CenterReferencePoint )
+	--char:setReferencePoint( display.CenterReferencePoint )
 	char.x = charX
 
 	local level = display.newText( levelString, 0, 18, "Gridnik", 14 )
 	level:setFillColor( 0, 0, 0 )
-	level:setReferencePoint( display.CenterReferencePoint )
+	--level:setReferencePoint( display.CenterReferencePoint )
 	level.x = levelX
 
 	levelIndicator:insert(char)
@@ -1609,7 +1615,7 @@ local function onNextBtnRelease( event )
 			-- save score
 			saveCurrScore()
 
-			storyboard.gotoScene( nextLevel, options )
+			composer.gotoScene( nextLevel, options )
 			--newLevelAnimation()
 			--endAnimation()
 
@@ -1650,7 +1656,7 @@ local function onPrevBtnRelease( event )
 		exitScore()
 		--resetScore()
 		endAnimation()
-		storyboard.gotoScene( "mainMenu", options )
+		composer.gotoScene( "mainMenu", options )
 	end 
 	return true	-- indicates successful touch
 end
@@ -1680,6 +1686,8 @@ local function drawNextButton()
 
 	local bg = display.newRect( x-12, y-12, 50, 50 )
 	bg:setFillColor( 255,255,255 )
+	bg.anchorX = 0
+	bg.anchorY = 0
 	nextButton:insert( bg )
 
 	local arrow = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
@@ -1707,6 +1715,8 @@ local function drawPrevButton()
 
 	local bg = display.newRect( x-12, y-12, 50, 50 )
 	bg:setFillColor( 255,255,255 )
+	bg.anchorX = 0
+	bg.anchorY = 0
 	prevButton:insert( bg )
 
 	arrow = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
@@ -1727,8 +1737,8 @@ end
 
 local function drawLineX( i )
 	local line = display.newLine( 0,gridHeight*i, 320,gridHeight*i )
-	line:setColor( 0, 0, 0)
-	line.width = 1
+	line:setStrokeColor( 0, 0, 0)
+	line.strokeWidth = 1
 	grid:insert( line )
 end
 
@@ -1738,8 +1748,8 @@ end
 
 local function drawLineY( i )
 	local line = display.newLine( gridWidth*i,0, gridWidth*i,568 )
-	line:setColor( 0, 0, 0 )
-	line.width = 1
+	line:setStrokeColor( 0, 0, 0 )
+	line.strokeWidth = 1
 	grid:insert( line )
 end
 
@@ -1767,12 +1777,12 @@ end
 -- BEGINNING OF YOUR IMPLEMENTATION
 -- 
 -- NOTE: Code outside of listener functions (below) will only be executed once,
---		 unless storyboard.removeScene() is called.
+--		 unless composer.removeScene() is called.
 -- 
 -----------------------------------------------------------------------------------------
 
 -- Called when the scene's view does not exist:
-function scene:createScene( event )
+function scene:create( event )
 	local group = self.view
 
 	-- corner objects
@@ -1803,30 +1813,29 @@ function scene:createScene( event )
 	group:insert( prevButton )
 	group:insert( levelIndicator )
 	group:insert( timeLeft )
+	scoreTimer = timer.performWithDelay(1,timerDown,time)
 end
 
 
 
 -- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
+function scene:show( event )
 	local group = self.view
-
-	scoreTimer = timer.performWithDelay(1,timerDown,time)
 
 	-- INSERT code here (e.g. start timers, load audio, start listeners, etc.)
 	
 end
 
 -- Called when scene is about to move offscreen:
-function scene:exitScene( event )
+function scene:hide( event )
 	local group = self.view
 	-- INSERT code here (e.g. stop timers, remove listenets, unload sounds, etc.)
 
-	storyboard.removeAll()
+	composer.removeHidden()
 end
 
--- If scene's view is removed, scene:destroyScene() will be called just prior to:
-function scene:destroyScene( event )
+-- If scene's view is removed, scene:destroy() will be called just prior to:
+function scene:destroy( event )
 	local group = self.view
 
 end
@@ -1835,19 +1844,19 @@ end
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
+-- "create" event is dispatched if scene's view does not exist
+scene:addEventListener( "create", scene )
 
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
+-- "enter" event is dispatched whenever scene transition has finished
+scene:addEventListener( "show", scene )
 
--- "exitScene" event is dispatched whenever before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
+-- "exit" event is dispatched whenever before next scene's transition begins
+scene:addEventListener( "hide", scene )
 
--- "destroyScene" event is dispatched before view is unloaded, which can be
+-- "destroy" event is dispatched before view is unloaded, which can be
 -- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
+-- composer.purgeScene() or composer.removeScene().
+scene:addEventListener( "destroy", scene )
 
 Runtime:addEventListener( "system", onSystemEvent )
 -----------------------------------------------------------------------------------------

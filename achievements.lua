@@ -5,8 +5,8 @@
 --
 -----------------------------------------------------------------------------------------
 
-local storyboard = require( "storyboard" )
-local scene = storyboard.newScene()
+local composer = require( "composer" )
+local scene = composer.newScene()
 
 -- include Corona's "widget" library
 local widget = require "widget"
@@ -127,7 +127,7 @@ local quotes = {
 	{"Lower-case typography has two sources: one is idealistic and the other functional-rational.", "Wim Crouwel"},
 	{"For quite a while Bauhaus stationery read: ‘wir schreiben alles klein, denn wir sparen damit zeit’.", "Wim Crouwel"},
 	{"Both Jan Tschichold and Herbert Bayer made designs for a universal alphabet.", "Wim Crouwel"},
-	{"Piet Zwart developed an emphasis on a clear, open en rhythmic order of typographic elements.", "PWim Crouwel"},
+	{"Piet Zwart developed an emphasis on a clear, open en rhythmic order of typographic elements.", "Wim Crouwel"},
 	{"I proposed a single-alphabet typeface as an answer to new functional needs.", "Wim Crouwel"},
 	{"NA was a rather theoretical proposal, since some of the characters did not have any resemblance with existing ones.", "Wim Crouwel"},
 	{"The basic principles in typography and graphic design, which were highly decisive in my career; are still valid.", "Wim Crouwel"},
@@ -148,7 +148,7 @@ local function onPrevBtnRelease( event )
 	if event.phase == "began" then
 		print("Go to main menu")
 		endAnimation()
-		storyboard.gotoScene( "mainMenu", options )
+		composer.gotoScene( "mainMenu", options )
 	end 
 	return true	-- indicates successful touch
 end
@@ -219,14 +219,16 @@ local function drawSlide( nr )
 	local quote = quotes[nr]
 	local w, h = gridWidth * 5, gridHeight * 5
 	local cX, cY = ( gridWidth * 2 ) + (( w + gridWidth ) * ( nr - 1 )), gridHeight * 4
-	local fX, fY = ( gridWidth * 2 ) + (( w + gridWidth ) * ( nr - 1 )), ( gridHeight * 9 ) + 16 + yFixSmall
+	local fX, fY = ( gridWidth * 2 ) + (( w + gridWidth ) * ( nr - 1 )), ( gridHeight * 9 ) + 14 + yFixSmall
 	local tX, tY = ( gridWidth * 2 ) + (( w + gridWidth ) * ( nr - 1 )), gridHeight * 11
 
 	content = display.newText( quote[1], cX, cY, w, h, "Gridnik", 18 )
+	content.anchorX = 0
 	content:setFillColor( 0, 0, 0 )
 	contentGroup:insert(content)
 
 	from = display.newText( quote[2], fX, fY, "Gridnik", 18 )
+	from.anchorX = 0
 	from:setFillColor( 0, 0, 0 )
 	contentGroup:insert(from)
 
@@ -277,16 +279,16 @@ end
 -- draw line X
 local function drawLineX( i )
 	local line = display.newLine( 0,gridHeight*i, 320,gridHeight*i )
-	line:setColor( 0, 0, 0)
-	line.width = 1
+	line:setStrokeColor( 0, 0, 0)
+	line.strokeWidth = 1
 	grid:insert( line )
 end
 
 -- draw line Y
 local function drawLineY( i )
 	local line = display.newLine( gridWidth*i,0, gridWidth*i,568 )
-	line:setColor( 0, 0, 0 )
-	line.width = 1
+	line:setStrokeColor( 0, 0, 0 )
+	line.strokeWidth = 1
 	grid:insert( line )
 end
 
@@ -309,12 +311,12 @@ end
 -- BEGINNING OF YOUR IMPLEMENTATION
 -- 
 -- NOTE: Code outside of listener functions (below) will only be executed once,
---		 unless storyboard.removeScene() is called.
+--		 unless composer.removeScene() is called.
 -- 
 -----------------------------------------------------------------------------------------
 
 -- Called when the scene's view does not exist:
-function scene:createScene( event )
+function scene:create( event )
 	
 	local group = self.view
 
@@ -342,7 +344,7 @@ end
 
 
 -- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
+function scene:show( event )
 	local group = self.view
 
 	-- INSERT code here (e.g. start timers, load audio, start listeners, etc.)
@@ -350,13 +352,13 @@ function scene:enterScene( event )
 end
 
 -- Called when scene is about to move offscreen:
-function scene:exitScene( event )
+function scene:hide( event )
 	local group = self.view
-	storyboard.removeAll()
+	composer.removeHidden()
 end
 
--- If scene's view is removed, scene:destroyScene() will be called just prior to:
-function scene:destroyScene( event )
+-- If scene's view is removed, scene:destroy() will be called just prior to:
+function scene:destroy( event )
 	local group = self.view
 	
 end
@@ -365,19 +367,19 @@ end
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
+-- "create" event is dispatched if scene's view does not exist
+scene:addEventListener( "create", scene )
 
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
+-- "enter" event is dispatched whenever scene transition has finished
+scene:addEventListener( "show", scene )
 
--- "exitScene" event is dispatched whenever before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
+-- "exit" event is dispatched whenever before next scene's transition begins
+scene:addEventListener( "hide", scene )
 
--- "destroyScene" event is dispatched before view is unloaded, which can be
+-- "destroy" event is dispatched before view is unloaded, which can be
 -- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
+-- composer.purgeScene() or composer.removeScene().
+scene:addEventListener( "destroy", scene )
 
 Runtime:addEventListener( "system", onSystemEvent )
 

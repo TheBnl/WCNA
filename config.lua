@@ -1,6 +1,6 @@
 application = {
 	content = {
-		graphicsCompatibility = 1,
+		---graphicsCompatibility = 1,
 		width = 320,
 		height = 568, 
 		scale = "zoomEven",

@@ -5,8 +5,8 @@
 --
 -----------------------------------------------------------------------------------------
 
-local storyboard = require( "storyboard" )
-local scene = storyboard.newScene()
+local composer = require( "composer" )
+local scene = composer.newScene()
 
 -- include Corona's "widget" library
 local widget = require "widget"
@@ -1581,8 +1581,8 @@ local function onNextBtnRelease( event )
 			
 			-- save score
 			saveCurrScore()
-			
-			storyboard.gotoScene( nextLevel, options )
+
+			composer.gotoScene( nextLevel, options )
 			--newLevelAnimation()
 			--endAnimation()
 
@@ -1622,7 +1622,7 @@ local function onPrevBtnRelease( event )
 		print("Go to main menu")
 		exitScore()
 		endAnimation()
-		storyboard.gotoScene( "mainMenu", options )
+		composer.gotoScene( "mainMenu", options )
 	end 
 	return true	-- indicates successful touch
 end
@@ -1699,8 +1699,8 @@ end
 
 local function drawLineX( i )
 	local line = display.newLine( 0,gridHeight*i, 320,gridHeight*i )
-	line:setColor( 0, 0, 0)
-	line.width = 1
+	line:setStrokeColor( 0, 0, 0)
+	line.strokeWidth = 1
 	grid:insert( line )
 end
 
@@ -1710,8 +1710,8 @@ end
 
 local function drawLineY( i )
 	local line = display.newLine( gridWidth*i,0, gridWidth*i,568 )
-	line:setColor( 0, 0, 0 )
-	line.width = 1
+	line:setStrokeColor( 0, 0, 0 )
+	line.strokeWidth = 1
 	grid:insert( line )
 end
 
@@ -1739,12 +1739,12 @@ end
 -- BEGINNING OF YOUR IMPLEMENTATION
 -- 
 -- NOTE: Code outside of listener functions (below) will only be executed once,
---		 unless storyboard.removeScene() is called.
+--		 unless composer.removeScene() is called.
 -- 
 -----------------------------------------------------------------------------------------
 
 -- Called when the scene's view does not exist:
-function scene:createScene( event )
+function scene:create( event )
 	local group = self.view
 	-- corner objects
 	for i=1,#cornerData do
@@ -1779,7 +1779,7 @@ end
 
 
 -- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
+function scene:show( event )
 	local group = self.view
 
 	scoreTimer = timer.performWithDelay(1,timerDown,time)
@@ -1789,16 +1789,16 @@ function scene:enterScene( event )
 end
 
 -- Called when scene is about to move offscreen:
-function scene:exitScene( event )
+function scene:hide( event )
 	local group = self.view
 	-- INSERT code here (e.g. stop timers, remove listenets, unload sounds, etc.)
 
 	resetLevel()
-	storyboard.removeAll()
+	composer.removeHidden()
 end
 
--- If scene's view is removed, scene:destroyScene() will be called just prior to:
-function scene:destroyScene( event )
+-- If scene's view is removed, scene:destroy() will be called just prior to:
+function scene:destroy( event )
 	local group = self.view
 
 end
@@ -1807,19 +1807,19 @@ end
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
+-- "create" event is dispatched if scene's view does not exist
+scene:addEventListener( "create", scene )
 
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
+-- "enter" event is dispatched whenever scene transition has finished
+scene:addEventListener( "show", scene )
 
--- "exitScene" event is dispatched whenever before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
+-- "exit" event is dispatched whenever before next scene's transition begins
+scene:addEventListener( "hide", scene )
 
--- "destroyScene" event is dispatched before view is unloaded, which can be
+-- "destroy" event is dispatched before view is unloaded, which can be
 -- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
+-- composer.purgeScene() or composer.removeScene().
+scene:addEventListener( "destroy", scene )
 
 Runtime:addEventListener( "system", onSystemEvent )
 -----------------------------------------------------------------------------------------

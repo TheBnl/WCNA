@@ -7,8 +7,8 @@
 -- hide the status bar
 display.setStatusBar( display.HiddenStatusBar )
 
--- include the Corona "storyboard" module
-local storyboard = require "storyboard"
+-- include the Corona "composer" module
+local composer = require "composer"
 
 local gameNetwork = require "gameNetwork"
 local loggedIntoGC = false
@@ -35,4 +35,4 @@ end
 Runtime:addEventListener( "system", onSystemEvent )
 
 -- load menu screen
-storyboard.gotoScene( "mainMenu")
+composer.gotoScene( "mainMenu")
