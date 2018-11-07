@@ -51,10 +51,11 @@ local gridWidth = math.floor(320/9)
 local gridHeight = math.floor(568/15)
 
 -- levels
-currentLevel = 2
-currentChar = "b"
-totalLevels = 22
-nextLevel = "level3"
+local currentLevel = 2
+local currentChar = "b"
+local totalLevels = 22
+local nextLevel = "level3"
+local achievement = "nl.bram-de-leeuw.wcna.fact2"
 
 -- timer options
 local time = 1000
@@ -1225,6 +1226,8 @@ function blockObject:drawBlock(i)
 		)
 
 		rect:setFillColor( 0, 0, 0 )
+		rect.anchorX = 0
+		rect.anchorY = 0
 		rect.alpha = 0
 		self:increaseId()
 
@@ -1369,13 +1372,14 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function alertMissing()
-	x = math.floor(gridWidth * 3 + 4)
-	y = 55
-	w = math.floor(gridWidth * 3)
-	h = math.floor(gridHeight * 2)
-	tY = 90 + yFixSmall
+	local x = math.floor(gridWidth * 3 + 4)
+	local y = 55
+	local w = math.floor(gridWidth * 3)
+	local h = math.floor(gridHeight * 2)
+	local tY = 90 + yFixSmall
 
-	local alertMissing = display.newText( "Something is missing", x, y, w, h, "Gridnik", 16 )
+	local alertMissing = display.newText( "Something is missing", x, y, w, h, "Gridnik.otf", 16 )
+	alertMissing.anchorX = 0
 	alertMissing:setFillColor( 0, 0, 0 )
 
 	alertMissing.y = -20
@@ -1389,13 +1393,14 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function alertWrong()
-	x = math.floor(gridWidth * 3 + 4)
-	y = 55
-	w = math.floor(gridWidth * 3)
-	h = math.floor(gridHeight * 2)
-	tY = 90 + yFixSmall
+	local x = math.floor(gridWidth * 3 + 4)
+	local y = 55
+	local w = math.floor(gridWidth * 3)
+	local h = math.floor(gridHeight * 2)
+	local tY = 90 + yFixSmall
 
-	local alertWrong = display.newText( "Something is wrong", x, y, w, h, "Gridnik", 16 )
+	local alertWrong = display.newText( "Something is wrong", x, y, w, h, "Gridnik.otf", 16 )
+	alertWrong.anchorX = 0
 	alertWrong:setFillColor( 0, 0, 0 )
 
 	alertWrong.y = -20
@@ -1409,16 +1414,17 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function alertFact( i )
-	x = math.floor(gridWidth * 3 + 4)
-	y = 55
-	w = math.floor(gridWidth * 3)
-	h = math.floor(gridHeight * 2)
-	tY = 90 + yFixSmall
+	local x = math.floor(gridWidth * 3 + 4)
+	local y = 55
+	local w = math.floor(gridWidth * 3)
+	local h = math.floor(gridHeight * 2)
+	local tY = 90 + yFixSmall
 
-	string = "Fact "..i.." unlocked!"
+	local string = "Fact "..i.." unlocked!"
 	print(string)
 
 	local alertFact = display.newText( string, x, y, w, h, "Gridnik", 16 )
+	alertFact.anchorX = 0
 	alertFact:setFillColor( 0, 0, 0 )
 
 	alertFact.y = -20
@@ -1464,15 +1470,14 @@ local function saveCurrScore()
 end
 
 local function drawTimer()
-
-	print(gridWidth * 3)
-
 	local x = gridWidth * 3
 	local y = ( display.viewableContentHeight - 5 ) + display.screenOriginY
 	local w = gridWidth * 3
 	local h = 10 
 
 	timeLeft = display.newRect( x, y, w, h )
+	timeLeft.anchorX = 0
+	timeLeft.anchorY = 0.5
 	timeLeft:setFillColor(0,0,0)
 	timeLeft.alpha = 0
 	--timeLeft.y = -10
@@ -1484,7 +1489,7 @@ local function timerDown()
 
 	local t = totalTime -- total time
 
-	timeLeft:setReferencePoint( display.CenterLeftReferencePoint )
+	--timeLeft:setReferencePoint( display.CenterLeftReferencePoint )
 	time = time - 1
 
 	timeLeft.width = ( timerWidth / t ) * time
@@ -1513,12 +1518,12 @@ local function drawLevelIndicator( level, char )
 
 	local char = display.newText( char, 0, 0, "Gridnik", 16 )
 	char:setFillColor( 0, 0, 0 )
-	char:setReferencePoint( display.CenterReferencePoint )
+	--char:setReferencePoint( display.CenterReferencePoint )
 	char.x = charX
 
 	local level = display.newText( levelString, 0, 18, "Gridnik", 14 )
 	level:setFillColor( 0, 0, 0 )
-	level:setReferencePoint( display.CenterReferencePoint )
+	--level:setReferencePoint( display.CenterReferencePoint )
 	level.x = levelX
 
 	levelIndicator:insert(char)
@@ -1569,7 +1574,7 @@ local function onNextBtnRelease( event )
 				{
 				    achievement =
 				    {
-				        identifier="nl.bram-de-leeuw.wcna.fact2",
+				        identifier=achievement,
 				        percentComplete=100,
 				        showsCompletionBanner=false,
 				    }
@@ -1644,13 +1649,15 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function drawNextButton()
-	x = 270
-	y = 65
-	addX, addY = 25, 25
+	local x = 270
+	local y = 65
+	local addX, addY = 25, 25
 
 	local triangle = { x,y, x+addX,y+(addY/2), x,y+addY, x,y }
 
 	local bg = display.newRect( x-12, y-12, 50, 50 )
+	bg.anchorX = 0
+	bg.anchorY = 0
 	bg:setFillColor( 255,255,255 )
 	nextButton:insert( bg )
 
@@ -1658,10 +1665,8 @@ local function drawNextButton()
 	nextButton:insert( arrow )
 
 	nextButton:addEventListener( "touch", onNextBtnRelease )
-
 	nextButton.alpha = 0
 	nextButton.y = -90
-
 	transition.to( nextButton, { time=1000, alpha=1, y=0, transition=easing.inQuad } )
 end
 
@@ -1670,18 +1675,20 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function drawPrevButton()
-	x = 20
-	y = 65
-	addX, addY = 25, 25
+	local x = 20
+	local y = 65
+	local addX, addY = 25, 25
 
 	local triangle = { x,y+(addY/2), x+addX,y, x+addX,y+addY, x,y+(addY/2) }
 
 
 	local bg = display.newRect( x-12, y-12, 50, 50 )
 	bg:setFillColor( 255,255,255 )
+	bg.anchorX = 0
+	bg.anchorY = 0
 	prevButton:insert( bg )
 
-	arrow = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+	local arrow = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
 	prevButton:insert( arrow )
 
 	prevButton:addEventListener( "touch", onPrevBtnRelease )
@@ -1774,7 +1781,6 @@ function scene:create( event )
 	group:insert( prevButton )
 	group:insert( levelIndicator )
 	group:insert( timeLeft )
-
 end
 
 
@@ -1782,9 +1788,6 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:show( event )
 	local group = self.view
-
-	print("correct: "..correct)
-	print("wrong: "..wrong)
 
 	scoreTimer = timer.performWithDelay(1,timerDown,time)
 

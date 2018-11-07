@@ -166,9 +166,11 @@ end
 local function drawAchievementsBtn()
 
 	local x = gridWidth * 2
-	local y = gridHeight * 10 + 14 + yFixSmall
+	local y = gridHeight * 10 + 18 + yFixSmall
 
-	achievements = display.newText( "achievements", x, y, "New-Alphabet", 39.5 )
+	achievements = display.newText( "achievements", x, y, "new_alphabet.ttf", 39.5 )
+	achievements.anchorX = 0;
+	achievements.anchorY = 0;
 	achievements:setFillColor( 0, 0, 0 )
 	achievements:addEventListener( "touch", onAchievementsBtnRelease )
 
@@ -204,14 +206,18 @@ end
 local function drawGameOver()
 
 	local x = gridWidth * 2
-	local gY = gridHeight * 3 - 30 + yFixBig
-	local oY = gridHeight * 5 - 30 + yFixBig
+	local gY = gridHeight * 3 - 15 + yFixBig
+	local oY = gridHeight * 5 - 15 + yFixBig
 
-	game = display.newText( "game", x, gY, "New-Alphabet", 121 )
+	local game = display.newText( "game", x, gY, "New-Alphabet", 121 )
+	game.anchorX = 0;
+	game.anchorY = 0;
 	game:setFillColor( 0, 0, 0 )
 	gameOver:insert( game )
 
-	over = display.newText( "over", x, oY, "New-Alphabet", 121 )
+	local over = display.newText( "over", x, oY, "New-Alphabet", 121 )
+	over.anchorX = 0;
+	over.anchorY = 0;
 	over:setFillColor( 0, 0, 0 )
 	gameOver:insert( over )
 end
@@ -221,13 +227,17 @@ local function drawScore()
 	
 	local sX = gridWidth * 2
 	local iX = gridWidth * 4 + 18.5
-	local y = gridHeight * 9 + 14 + yFixSmall
+	local y = gridHeight * 8 + 18 + yFixSmall
 
 	score = display.newText( "score", sX, y, "New-Alphabet", 39.5 )
+	score.anchorX = 0;
+	score.anchorY = 0;
 	score:setFillColor( 0, 0, 0 )
 	highScore:insert( score )
 
 	scoreInt = display.newText( totalScore, iX, y, "New-Alphabet", 39.5 )
+	scoreInt.anchorX = 0;
+	scoreInt.anchorY = 0;
 	scoreInt:setFillColor( 0, 0, 0 )
 	highScore:insert( scoreInt )
 

@@ -56,6 +56,7 @@ local currentLevel = 1
 local totalLevels = 22
 local currentChar = "c"
 local nextLevel = "level2"
+local achievement = "nl.bram-de-leeuw.wcna.fact1"
 
 -- timer options
 local time = 1000
@@ -1403,7 +1404,7 @@ local function alertMissing()
 	local h = math.floor(gridHeight * 2)
 	local tY = 90 + yFixSmall
 
-	local alertMissing = display.newText( "Something is missing", x, y, w, h, "Gridnik", 16 )
+	local alertMissing = display.newText( "Something is missing", x, y, w, h, "Gridnik.otf", 16 )
 	alertMissing.anchorX = 0
 	alertMissing:setFillColor( 0, 0, 0 )
 
@@ -1449,6 +1450,7 @@ local function alertFact( i )
 	print(string)
 
 	local alertFact = display.newText( string, x, y, w, h, "Gridnik", 16 )
+	alertFact.anchorX = 0
 	alertFact:setFillColor( 0, 0, 0 )
 
 	alertFact.y = -20
@@ -1494,9 +1496,6 @@ local function saveCurrScore()
 end
 
 local function drawTimer()
-
-	print(gridWidth * 3)
-
 	local x = gridWidth * 3
 	local y = ( display.viewableContentHeight - 5 ) + display.screenOriginY
 	local w = gridWidth * 3
@@ -1706,9 +1705,9 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function drawPrevButton()
-	x = 20
-	y = 65
-	addX, addY = 25, 25
+	local x = 20
+	local y = 65
+	local addX, addY = 25, 25
 
 	local triangle = { x,y+(addY/2), x+addX,y, x+addX,y+addY, x,y+(addY/2) }
 
@@ -1719,7 +1718,7 @@ local function drawPrevButton()
 	bg.anchorY = 0
 	prevButton:insert( bg )
 
-	arrow = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+	local arrow = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
 	prevButton:insert( arrow )
 
 	prevButton:addEventListener( "touch", onPrevBtnRelease )

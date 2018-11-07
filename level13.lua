@@ -51,10 +51,11 @@ local gridWidth = math.floor(320/9)
 local gridHeight = math.floor(568/15)
 
 -- levels
-currentLevel = 13
-currentChar = "m"
-totalLevels = 22
-nextLevel = "level14"
+local currentLevel = 13
+local currentChar = "m"
+local totalLevels = 22
+local nextLevel = "level14"
+local achievement = "nl.bram-de-leeuw.wcna.fact13"
 
 -- timer options
 local time = 1000
@@ -224,7 +225,7 @@ local function myTouchListener( event )
 		addCorners( event.target, true )
 
 		transition.to( event.target, { time=150, alpha=1, transition=easing.outQuad } )
-	
+
 	elseif ( event.phase == "began" and event.target.display == true ) then
 
 		event.target.display = false
@@ -392,7 +393,7 @@ function addCorners( eventTarget, a )
 			end
 
 		elseif trn == false and brn == false and tn == true then
-			
+
 			if a == true then
 				squareCorner(bcID, true)
 				squareCorner(tcID, true)
@@ -538,7 +539,7 @@ function addCorners( eventTarget, a )
 				squareCorner(tcID, true)
 				bottomRightCorner(bcID, true)
 			end
-		
+
 		elseif trn == true and brn == false and tn == false and bn == false then
 			if a == true then
 				bottomRightCorner(tcID, true)
@@ -581,7 +582,7 @@ function addCorners( eventTarget, a )
 				squareCorner(bcID, true)
 			end
 		elseif trn == true and brn == true and tn == true and bn == false then
-			
+
 			if a == true then
 				topRightCorner(bcID, true)
 				squareCorner(tcID, true)
@@ -890,7 +891,7 @@ function addCorners( eventTarget, a )
 				squareCorner(tcID, true)
 				bottomLeftCorner(bcID, true)
 			end
-		
+
 		elseif tln == true and bln == false and tn == false and bn == false then
 			if a == true then
 				bottomLeftCorner(tcID, true)
@@ -933,7 +934,7 @@ function addCorners( eventTarget, a )
 				squareCorner(tcID, true)
 			end
 		elseif tln == true and bln == true and tn == true and bn == false then
-			
+
 			if a == true then
 				topLeftCorner(bcID, true)
 				squareCorner(tcID, true)
@@ -1127,7 +1128,7 @@ function topLeftCorner(i, on)
 	cornerGroup[i].bottomLeft.alpha = 0
 	cornerGroup[i].topRight.alpha = 0
 
-	if on == true then 
+	if on == true then
 		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.inQuad } )
 		transition.to( cornerGroup[i].topLeft, { time=150, alpha=1, transition=easing.inQuad } )
 	elseif on == false then
@@ -1145,7 +1146,7 @@ function topRightCorner(i, on)
 	cornerGroup[i].bottomLeft.alpha = 0
 	cornerGroup[i].bottomRight.alpha = 0
 
-	if on == true then 
+	if on == true then
 		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.inQuad } )
 		transition.to( cornerGroup[i].topRight, { time=150, alpha=1, transition=easing.inQuad } )
 	elseif on == false then
@@ -1163,7 +1164,7 @@ function bottomLeftCorner(i, on)
 	cornerGroup[i].topLeft.alpha = 0
 	cornerGroup[i].topRight.alpha = 0
 
-	if on == true then 
+	if on == true then
 		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.inQuad } )
 		transition.to( cornerGroup[i].bottomLeft, { time=150, alpha=1, transition=easing.inQuad } )
 	elseif on == false then
@@ -1181,7 +1182,7 @@ function bottomRightCorner(i, on)
 	cornerGroup[i].bottomLeft.alpha = 0
 	cornerGroup[i].topRight.alpha = 0
 
-	if on == true then 
+	if on == true then
 		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.inQuad } )
 		transition.to( cornerGroup[i].bottomRight, { time=150, alpha=1, transition=easing.inQuad } )
 	elseif on == false then
@@ -1195,7 +1196,7 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 function squareCorner(i, on)
-	if on == true then 
+	if on == true then
 		transition.to( cornerGroup[i], { time=150, alpha=1, transition=easing.inQuad } )
 		cornerGroup[i].bottomRight.alpha = 1
 		cornerGroup[i].topLeft.alpha = 1
@@ -1214,28 +1215,30 @@ end
 --            DRAW THE BLOCKS             --
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-function blockObject:drawBlock(i) 
-	 local rect = display.newRect( 
-		-- position
+function blockObject:drawBlock(i)
+	local rect = display.newRect(
+	-- position
 		( gridWidth  * self.posX ),
 		( gridHeight * self.posY ),
 		-- size
 		( gridWidth  * self.width ),
 		( gridHeight * self.height )
-		)
+	)
 
-		rect:setFillColor( 0, 0, 0 )
-		rect.alpha = 0
-		self:increaseId()
+	rect:setFillColor( 0, 0, 0 )
+	rect.anchorX = 0
+	rect.anchorY = 0
+	rect.alpha = 0
+	self:increaseId()
 
-		rect.name, rect.id, rect.display = self.name, self.id, self.display
-		rect.tln, rect.trn, rect.bln, rect.brn, rect.tn, rect.bn = self.tln, self.trn, self.bln, self.brn, self.tn, self.bn
-		rect.lc, rect.rc, rect.tc, rect.bc = self.lc, self.rc, self.tc, self.bc
+	rect.name, rect.id, rect.display = self.name, self.id, self.display
+	rect.tln, rect.trn, rect.bln, rect.brn, rect.tn, rect.bn = self.tln, self.trn, self.bln, self.brn, self.tn, self.bn
+	rect.lc, rect.rc, rect.tc, rect.bc = self.lc, self.rc, self.tc, self.bc
 
-		rect:addEventListener( "touch", myTouchListener )
-		rect.isHitTestable = true
+	rect:addEventListener( "touch", myTouchListener )
+	rect.isHitTestable = true
 
-		blocksGroup:insert( rect )
+	blocksGroup:insert( rect )
 end
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -1252,7 +1255,7 @@ function cornerObject:drawCorner()
 
 	local x, y = 0,0--gridWidth * self.posX, gridHeight * self.posY
 	addX, addY = gridWidth, gridHeight
-	
+
 	local tlcPoints = { x,y, x+addX,y, x,y+addY, x,y }
 	local trcPoints = { x,y, x+addX,y+addY, x+addX,y, x,y }
 	local blcPoints = { x,y, x+addX,y+addY, x,y+addY, x,y }
@@ -1278,7 +1281,7 @@ function cornerObject:drawCorner()
 	corner:insert( bottomRight )
 	corner.bottomRight = bottomRight
 
-	
+
 	--corner:setReferencePoint( display.TopLeftReferencePoint )
 	--corner.cornerX, corner.cornerY = corner:localToContent( (gridWidth * self.posX - gridWidth * 5), gridHeight * self.posY )
 
@@ -1369,13 +1372,14 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function alertMissing()
-	x = math.floor(gridWidth * 3 + 4)
-	y = 55
-	w = math.floor(gridWidth * 3)
-	h = math.floor(gridHeight * 2)
-	tY = 90 + yFixSmall
+	local x = math.floor(gridWidth * 3 + 4)
+	local y = 55
+	local w = math.floor(gridWidth * 3)
+	local h = math.floor(gridHeight * 2)
+	local tY = 90 + yFixSmall
 
-	local alertMissing = display.newText( "Something is missing", x, y, w, h, "Gridnik", 16 )
+	local alertMissing = display.newText( "Something is missing", x, y, w, h, "Gridnik.otf", 16 )
+	alertMissing.anchorX = 0
 	alertMissing:setFillColor( 0, 0, 0 )
 
 	alertMissing.y = -20
@@ -1389,13 +1393,14 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function alertWrong()
-	x = math.floor(gridWidth * 3 + 4)
-	y = 55
-	w = math.floor(gridWidth * 3)
-	h = math.floor(gridHeight * 2)
-	tY = 90 + yFixSmall
+	local x = math.floor(gridWidth * 3 + 4)
+	local y = 55
+	local w = math.floor(gridWidth * 3)
+	local h = math.floor(gridHeight * 2)
+	local tY = 90 + yFixSmall
 
-	local alertWrong = display.newText( "Something is wrong", x, y, w, h, "Gridnik", 16 )
+	local alertWrong = display.newText( "Something is wrong", x, y, w, h, "Gridnik.otf", 16 )
+	alertWrong.anchorX = 0
 	alertWrong:setFillColor( 0, 0, 0 )
 
 	alertWrong.y = -20
@@ -1409,16 +1414,17 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function alertFact( i )
-	x = math.floor(gridWidth * 3 + 4)
-	y = 55
-	w = math.floor(gridWidth * 3)
-	h = math.floor(gridHeight * 2)
-	tY = 90 + yFixSmall
+	local x = math.floor(gridWidth * 3 + 4)
+	local y = 55
+	local w = math.floor(gridWidth * 3)
+	local h = math.floor(gridHeight * 2)
+	local tY = 90 + yFixSmall
 
-	string = "Fact "..i.." unlocked!"
+	local string = "Fact "..i.." unlocked!"
 	print(string)
 
 	local alertFact = display.newText( string, x, y, w, h, "Gridnik", 16 )
+	alertFact.anchorX = 0
 	alertFact:setFillColor( 0, 0, 0 )
 
 	alertFact.y = -20
@@ -1464,15 +1470,14 @@ local function saveCurrScore()
 end
 
 local function drawTimer()
-
-	print(gridWidth * 3)
-
 	local x = gridWidth * 3
 	local y = ( display.viewableContentHeight - 5 ) + display.screenOriginY
 	local w = gridWidth * 3
-	local h = 10 
+	local h = 10
 
 	timeLeft = display.newRect( x, y, w, h )
+	timeLeft.anchorX = 0
+	timeLeft.anchorY = 0.5
 	timeLeft:setFillColor(0,0,0)
 	timeLeft.alpha = 0
 	--timeLeft.y = -10
@@ -1484,12 +1489,12 @@ local function timerDown()
 
 	local t = totalTime -- total time
 
-	timeLeft:setReferencePoint( display.CenterLeftReferencePoint )
+	--timeLeft:setReferencePoint( display.CenterLeftReferencePoint )
 	time = time - 1
 
 	timeLeft.width = ( timerWidth / t ) * time
 
-	timeLeft.x = 105 - (timerWidth / ( t * 2 )) 
+	timeLeft.x = 105 - (timerWidth / ( t * 2 ))
 
 	if( time == 0 )then
 		print("Time Out") -- or do your code for time out
@@ -1513,12 +1518,12 @@ local function drawLevelIndicator( level, char )
 
 	local char = display.newText( char, 0, 0, "Gridnik", 16 )
 	char:setFillColor( 0, 0, 0 )
-	char:setReferencePoint( display.CenterReferencePoint )
+	--char:setReferencePoint( display.CenterReferencePoint )
 	char.x = charX
 
 	local level = display.newText( levelString, 0, 18, "Gridnik", 14 )
 	level:setFillColor( 0, 0, 0 )
-	level:setReferencePoint( display.CenterReferencePoint )
+	--level:setReferencePoint( display.CenterReferencePoint )
 	level.x = levelX
 
 	levelIndicator:insert(char)
@@ -1565,24 +1570,23 @@ local function onNextBtnRelease( event )
 				alertFact(currentLevel)
 				levels[currentLevel] = 1
 
-
 				gameNetwork.request( "unlockAchievement",
-				{
-				    achievement =
-				    {
-				        identifier="nl.bram-de-leeuw.wcna.fact13",
-				        percentComplete=100,
-				        showsCompletionBanner=false,
-				    }
-				})
+					{
+						achievement =
+						{
+							identifier=achievement,
+							percentComplete=100,
+							showsCompletionBanner=false,
+						}
+					})
 			end
 
 			-- save levels
 			saveLevels()
-			
+
 			-- save score
 			saveCurrScore()
-			
+
 			composer.gotoScene( nextLevel, options )
 			--newLevelAnimation()
 			--endAnimation()
@@ -1602,7 +1606,7 @@ local function onNextBtnRelease( event )
 				end
 			end
 
-		else 
+		else
 			print("exeption")
 		end
 
@@ -1610,7 +1614,7 @@ local function onNextBtnRelease( event )
 		correct = 0
 		wrong = 0
 
-	end 
+	end
 	return true	-- indicates successful touch
 end
 
@@ -1624,7 +1628,7 @@ local function onPrevBtnRelease( event )
 		exitScore()
 		endAnimation()
 		composer.gotoScene( "mainMenu", options )
-	end 
+	end
 	return true	-- indicates successful touch
 end
 
@@ -1645,13 +1649,15 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function drawNextButton()
-	x = 270
-	y = 65
-	addX, addY = 25, 25
+	local x = 270
+	local y = 65
+	local addX, addY = 25, 25
 
 	local triangle = { x,y, x+addX,y+(addY/2), x,y+addY, x,y }
 
 	local bg = display.newRect( x-12, y-12, 50, 50 )
+	bg.anchorX = 0
+	bg.anchorY = 0
 	bg:setFillColor( 255,255,255 )
 	nextButton:insert( bg )
 
@@ -1659,10 +1665,8 @@ local function drawNextButton()
 	nextButton:insert( arrow )
 
 	nextButton:addEventListener( "touch", onNextBtnRelease )
-
 	nextButton.alpha = 0
 	nextButton.y = -90
-
 	transition.to( nextButton, { time=1000, alpha=1, y=0, transition=easing.inQuad } )
 end
 
@@ -1671,18 +1675,20 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function drawPrevButton()
-	x = 20
-	y = 65
-	addX, addY = 25, 25
+	local x = 20
+	local y = 65
+	local addX, addY = 25, 25
 
 	local triangle = { x,y+(addY/2), x+addX,y, x+addX,y+addY, x,y+(addY/2) }
 
 
 	local bg = display.newRect( x-12, y-12, 50, 50 )
 	bg:setFillColor( 255,255,255 )
+	bg.anchorX = 0
+	bg.anchorY = 0
 	prevButton:insert( bg )
 
-	arrow = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
+	local arrow = polygonFill( table.listToNamed(triangle,{'x','y'}), isclosed, isperpixel, widthheight, widthheight, {0,0,0} )
 	prevButton:insert( arrow )
 
 	prevButton:addEventListener( "touch", onPrevBtnRelease )
@@ -1738,10 +1744,10 @@ end
 
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
--- 
+--
 -- NOTE: Code outside of listener functions (below) will only be executed once,
 --		 unless composer.removeScene() is called.
--- 
+--
 -----------------------------------------------------------------------------------------
 
 -- Called when the scene's view does not exist:
@@ -1786,7 +1792,7 @@ function scene:show( event )
 	scoreTimer = timer.performWithDelay(1,timerDown,time)
 
 	-- INSERT code here (e.g. start timers, load audio, start listeners, etc.)
-	
+
 end
 
 -- Called when scene is about to move offscreen:
