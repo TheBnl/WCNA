@@ -4,9 +4,6 @@
 --
 -----------------------------------------------------------------------------------------
 
-print(display.pixelWidth / display.actualContentWidth)
-print('whajo')
-
 local composer = require("composer")
 local scene = composer.newScene()
 
@@ -64,6 +61,12 @@ local achievements
 local gridWidth = math.floor(320 / 9)
 local gridHeight = math.floor(568 / 15)
 
+--local gridWidth = math.floor(display.actualContentWidth / 9)
+--local gridHeight = math.floor(display.actualContentHeight / 15)
+
+print('pixelWidth ' .. display.pixelWidth .. ' actualContentWidth ' .. display.actualContentWidth)
+print('pixelHeight ' .. display.pixelHeight .. ' actualContentHeight ' .. display.actualContentHeight)
+
 display.setDefault("background", 255, 255, 255)
 
 -- line data
@@ -72,8 +75,8 @@ local linesY = { 2, 3, 6, 7 }
 
 -- font fix
 if system.getInfo("environment") == "simulator" then simulator = true end
-local yFixBig = 14
-local yFixSmall = 6
+local yFixBig = 0 --14
+local yFixSmall = 0 --6
 if simulator then
     yFixBig = 0
     yFixSmall = 0

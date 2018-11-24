@@ -35,5 +35,4 @@ end
 Runtime:addEventListener( "system", onSystemEvent )
 
 -- load menu screen
---composer.gotoScene( "mainMenu")
-composer.gotoScene( "gameOver")
+composer.gotoScene( "mainMenu")

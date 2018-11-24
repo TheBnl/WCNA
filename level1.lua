@@ -59,8 +59,8 @@ local nextLevel = "level2"
 local achievement = "nl.bram-de-leeuw.wcna.fact1"
 
 -- timer options
-local time = 1000
-local totalTime = 1000
+local time = 5000
+local totalTime = 5000
 local timerWidth = gridWidth * 3
 
 -- change story board options
@@ -1665,6 +1665,7 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function resetLevel()
+	timer.cancel(scoreTimer)
 	correct = 0
 	wrong = 0
 	for i=1, #blocksData do
@@ -1829,7 +1830,7 @@ end
 function scene:hide( event )
 	local group = self.view
 	-- INSERT code here (e.g. stop timers, remove listenets, unload sounds, etc.)
-
+	resetLevel()
 	composer.removeHidden()
 end
 

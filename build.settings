@@ -2,18 +2,22 @@
 -- portrait, portraitUpsideDown, landscapeLeft, landscapeRight
 
 settings = {
-	
-	orientation = {
-		default = "portrait",
-		supported = { "portrait","portraitUpsideDown" }
-	},
-	
-	iphone = {
-		plist = {
-			UIStatusBarHidden = true,
-			UIPrerenderedIcon = true, 
-			UIApplicationExitsOnSuspend = true,
-			CFBundleIconFiles = {
+    orientation = {
+        default = "portrait",
+        supported = { "portrait","portraitUpsideDown" }
+    },
+    plugins = {
+        ["CoronaProvider.gameNetwork.apple"] = {
+            publisherId = "com.coronalabs",
+            supportedPlatforms = { iphone=true, },
+        },
+    },
+    iphone = {
+        plist = {
+            UIStatusBarHidden = true,
+            UIPrerenderedIcon = true,
+            UIApplicationExitsOnSuspend = true,
+            CFBundleIconFiles = {
             "Icon.png",
             "Icon@2x.png",
             "Icon-72.png",
@@ -26,6 +30,6 @@ settings = {
                 "Gridnik.otf",
                 "new_alphabet.ttf"
             },
-		}
-	},
+        }
+    },
 }

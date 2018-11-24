@@ -58,8 +58,8 @@ local nextLevel = "level5"
 local achievement = "nl.bram-de-leeuw.wcna.fact4"
 
 -- timer options
-local time = 1000
-local totalTime = 1000
+local time = 5000
+local totalTime = 5000
 local timerWidth = gridWidth * 3
 
 local trueBlocks = {2,5,7}
@@ -1637,6 +1637,7 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 local function resetLevel()
+	timer.cancel(scoreTimer)
 	correct = 0
 	wrong = 0
 	for i=1, #blocksData do
