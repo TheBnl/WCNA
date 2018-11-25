@@ -71,8 +71,10 @@ end
 
 -- font fix
 if system.getInfo("environment") == "simulator" then simulator = true end
-yFixBig = 14
-yFixSmall = 6
+-- yFixBig = 14
+-- yFixSmall = 6
+yFixBig = 0
+yFixSmall = 0
 if simulator then
     yFixBig = 0
     yFixSmall = 0

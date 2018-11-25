@@ -26,7 +26,7 @@ end
 
 -- function to listen for system events
 local function onSystemEvent( event ) 
-    if event.type == "applicationStart" then
+    if (event.type == "applicationStart") and not (system.getInfo("environment") == "simulator") then
         gameNetwork.init( "gamecenter", initCallback )
         return true
     end

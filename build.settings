@@ -9,27 +9,15 @@ settings = {
     plugins = {
         ["CoronaProvider.gameNetwork.apple"] = {
             publisherId = "com.coronalabs",
-            supportedPlatforms = { iphone=true, },
+            supportedPlatforms = { iphone=true, ["iphone-sim"]=true, },
         },
     },
     iphone = {
+        xcassets = "Images.xcassets",
         plist = {
             UIStatusBarHidden = true,
             UIPrerenderedIcon = true,
-            UIApplicationExitsOnSuspend = true,
-            CFBundleIconFiles = {
-            "Icon.png",
-            "Icon@2x.png",
-            "Icon-72.png",
-            "Icon-Small-50.png",
-            "Icon-Small.png",
-            "Icon-Small@2x.png"
-            },
-            UIAppFonts =
-            {
-                "Gridnik.otf",
-                "new_alphabet.ttf"
-            },
+            UIApplicationExitsOnSuspend = true
         }
     },
 }
